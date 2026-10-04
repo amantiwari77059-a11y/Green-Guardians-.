@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Green Guardians – Swachh Campus Society</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===================== RESET & BASE ===================== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { font-family: 'Poppins', sans-serif; background: #f8fdf4; color: #1a2e1a; overflow-x: hidden; }
+    img { max-width: 100%; display: block; }
+    a { text-decoration: none; color: inherit; }
+    ul { list-style: none; }
+
+    /* ===================== VARIABLES ===================== */
+    :root {
+      --green-dark:   #1b5e20;
+      --green-mid:    #2e7d32;
+      --green-main:   #388e3c;
+      --green-light:  #66bb6a;
+      --green-pale:   #c8e6c9;
+      --green-bg:     #f1f8e9;
+      --earth-brown:  #5d4037;
+      --earth-tan:    #a1887f;
+      --earth-light:  #efebe9;
+      --accent-yellow:#f9a825;
+      --accent-sky:   #0288d1;
+      --white:        #ffffff;
+      --off-white:    #f8fdf4;
+      --text-dark:    #1a2e1a;
+      --text-mid:     #3e5c3e;
+      --text-light:   #6a8a6a;
+      --shadow:       0 4px 24px rgba(46,125,50,0.12);
+      --shadow-lg:    0 12px 40px rgba(46,125,50,0.18);
+      --radius:       16px;
+      --radius-sm:    10px;
+    }
+
+    /* ===================== SCROLLBAR ===================== */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--green-bg); }
+    ::-webkit-scrollbar-thumb { background: var(--green-main); border-radius: 4px; }
+
+    /* ===================== NAVBAR ===================== */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 72px;
+      background: rgba(248,253,244,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(46,125,50,0.1);
+      transition: box-shadow 0.3s;
+    }
+    .navbar.scrolled { box-shadow: var(--shadow); }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 1.25rem; color: var(--green-dark);
+    }
+    .nav-logo .leaf-icon { font-size: 1.6rem; }
+    .nav-links { display: flex; gap: 2rem; align-items: center; }
+    .nav-links a {
+      font-size: 0.9rem; font-weight: 500; color: var(--text-mid);
+      transition: color 0.2s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
+      height: 2px; background: var(--green-main); transform: scaleX(0);
+      transition: transform 0.25s;
+    }
+    .nav-links a:hover { color: var(--green-main); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-cta {
+      background: var(--green-main); color: var(--white) !important;
+      padding: 8px 20px; border-radius: 24px; font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--green-dark) !important; }
+    .nav-cta::after { display: none !important; }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 4px;
+    }
+    .hamburger span {
+      width: 26px; height: 2px; background: var(--green-dark);
+      border-radius: 2px; transition: 0.3s;
+    }
+    .mobile-menu {
+      display: none; position: fixed; top: 72px; left: 0; right: 0;
+      background: var(--white); padding: 1.5rem 5%;
+      border-bottom: 1px solid var(--green-pale);
+      box-shadow: var(--shadow); z-index: 999;
+      flex-direction: column; gap: 1rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-weight: 500; color: var(--text-mid); padding: 0.5rem 0; border-bottom: 1px solid var(--green-bg); }
+    .mobile-menu a:last-child { border-bottom: none; }
+
+    /* ===================== BUTTONS ===================== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 32px; font-weight: 700;
+      font-size: 1rem; cursor: pointer; border: none;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--green-main); color: var(--white); box-shadow: 0 4px 20px rgba(56,142,60,0.4); }
+    .btn-primary:hover { background: var(--green-dark); box-shadow: 0 8px 28px rgba(56,142,60,0.5); }
+    .btn-outline {
+      background: transparent; color: var(--white);
+      border: 2px solid rgba(255,255,255,0.7);
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.15); border-color: var(--white); }
+    .btn-earth { background: var(--earth-brown); color: var(--white); box-shadow: 0 4px 20px rgba(93,64,55,0.3); }
+    .btn-earth:hover { background: #4e342e; }
+
+    /* ===================== SECTION COMMONS ===================== */
+    section { padding: 100px 5%; }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--green-pale); color: var(--green-dark);
+      padding: 6px 16px; border-radius: 20px; font-size: 0.8rem;
+      font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
+      color: var(--text-dark); line-height: 1.2; margin-bottom: 1rem;
+    }
+    .section-title span { color: var(--green-main); }
+    .section-subtitle {
+      font-size: 1.05rem; color: var(--text-light);
+      max-width: 600px; line-height: 1.7; margin-bottom: 3rem;
+    }
+    .text-center { text-align: center; }
+    .text-center .section-subtitle { margin-left: auto; margin-right: auto; }
+
+    /* ===================== HERO SECTION ===================== */
+    #hero {
+      min-height: 100vh; padding: 0;
+      background: linear-gradient(135deg, #0a3d0a 0%, #1b5e20 40%, #2e7d32 70%, #33691e 100%);
+      position: relative; overflow: hidden;
+      display: flex; align-items: center;
+    }
+    .hero-shapes { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .hero-shape {
+      position: absolute; border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    .hero-shape-1 { width: 600px; height: 600px; top: -200px; right: -100px; }
+    .hero-shape-2 { width: 400px; height: 400px; bottom: -100px; left: -80px; }
+    .hero-shape-3 { width: 200px; height: 200px; top: 40%; left: 60%; background: rgba(102,187,106,0.1); }
+    .hero-leaves {
+      position: absolute; inset: 0; pointer-events: none;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end;
+      padding-right: 5%;
+    }
+    .floating-leaf {
+      font-size: clamp(3rem, 6vw, 7rem); opacity: 0.12;
+      animation: floatLeaf 6s ease-in-out infinite;
+    }
+    .floating-leaf:nth-child(2) { animation-delay: -2s; }
+    .floating-leaf:nth-child(3) { animation-delay: -4s; font-size: clamp(2rem, 4vw, 5rem); }
+    @keyframes floatLeaf {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(8deg); }
+    }
+    .hero-content {
+      position: relative; z-index: 2; padding: 120px 5% 80px;
+      max-width: 800px;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.15); color: #a5d6a7;
+      padding: 8px 18px; border-radius: 24px; font-size: 0.85rem;
+      font-weight: 600; margin-bottom: 1.5rem; border: 1px solid rgba(165,214,167,0.3);
+      backdrop-filter: blur(8px);
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 800;
+      color: var(--white); line-height: 1.1; margin-bottom: 1rem;
+    }
+    .hero-title .accent { color: #a5d6a7; }
+    .hero-tagline {
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem); font-weight: 500;
+      color: rgba(255,255,255,0.8); margin-bottom: 1rem;
+      letter-spacing: 2px;
+    }
+    .hero-tagline .dot { color: #66bb6a; margin: 0 4px; }
+    .hero-desc {
+      font-size: 1rem; color: rgba(255,255,255,0.65);
+      max-width: 560px; line-height: 1.8; margin-bottom: 2.5rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+    .hero-stats {
+      display: flex; gap: 2.5rem; flex-wrap: wrap;
+      margin-top: 4rem; padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .stat { }
+    .stat-num {
+      font-size: 1.8rem; font-weight: 800; color: #a5d6a7; line-height: 1;
+    }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+    .scroll-hint {
+      position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.5); font-size: 0.8rem; text-align: center;
+      animation: bounce 2s infinite;
+    }
+    .scroll-hint .arrow { font-size: 1.5rem; display: block; }
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ===================== ABOUT SECTION ===================== */
+    #about { background: var(--white); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+    .about-visual {
+      position: relative; border-radius: var(--radius); overflow: hidden;
+    }
+    .about-img-placeholder {
+      width: 100%; aspect-ratio: 4/3;
+      background: linear-gradient(135deg, var(--green-pale), var(--green-bg));
+      border-radius: var(--radius); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1rem;
+      border: 2px dashed var(--green-light);
+    }
+    .about-img-placeholder .big-icon { font-size: 5rem; opacity: 0.6; }
+    .about-img-placeholder p { color: var(--text-light); font-size: 0.85rem; }
+    .about-card {
+      position: absolute; bottom: -20px; right: -20px;
+      background: var(--white); padding: 1.2rem 1.5rem;
+      border-radius: var(--radius-sm); box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .about-card .icon { font-size: 2rem; }
+    .about-card .label { font-size: 0.75rem; color: var(--text-light); }
+    .about-card .value { font-size: 1.1rem; font-weight: 700; color: var(--green-dark); }
+    .about-content { }
+    .about-values { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+    .value-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--green-bg); padding: 12px 16px; border-radius: var(--radius-sm);
+      font-weight: 600; font-size: 0.9rem; color: var(--green-dark);
+    }
+    .value-chip span { font-size: 1.3rem; }
+
+    /* ===================== WHAT WE DO ===================== */
+    #what-we-do { background: var(--green-bg); }
+    .activities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .activity-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 2rem; transition: transform 0.3s, box-shadow 0.3s;
+      border: 1px solid transparent; cursor: default;
+      position: relative; overflow: hidden;
+    }
+    .activity-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--green-main), var(--green-light));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.35s;
+    }
+    .activity-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); border-color: var(--green-pale); }
+    .activity-card:hover::before { transform: scaleX(1); }
+    .activity-icon {
+      width: 64px; height: 64px; border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; margin-bottom: 1.2rem;
+    }
+    .activity-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.6rem; }
+    .activity-card p { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; }
+    .icon-bg-1 { background: #e8f5e9; }
+    .icon-bg-2 { background: #fff8e1; }
+    .icon-bg-3 { background: #e3f2fd; }
+    .icon-bg-4 { background: #fce4ec; }
+    .icon-bg-5 { background: #f3e5f5; }
+    .icon-bg-6 { background: #e0f2f1; }
+    .icon-bg-7 { background: #fff3e0; }
+
+    /* ===================== EVENTS SECTION ===================== */
+    #events { background: var(--white); }
+    .events-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 3rem; align-items: start; }
+    .events-sidebar { position: sticky; top: 100px; }
+    .event-calendar {
+      background: linear-gradient(145deg, #1b5e20, #2e7d32);
+      color: var(--white);
+      border-radius: var(--radius); padding: 1.8rem; text-align: center;
+      box-shadow: 0 10px 30px rgba(46,125,50,0.25);
+    }
+    .cal-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.2rem;
+    }
+    .cal-nav-btn {
+      background: rgba(255,255,255,0.18); border: none; color: #ffffff;
+      width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+      font-size: 1.2rem; font-weight: 700; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .cal-nav-btn:hover {
+      background: rgba(255,255,255,0.35); transform: scale(1.1);
+    }
+    .cal-month-wrap { flex: 1; text-align: center; padding: 0 8px; }
+    .cal-header { font-size: 0.8rem; opacity: 0.85; margin-bottom: 0.2rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .cal-month { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.3px; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; font-size: 0.75rem; margin-bottom: 0.5rem; }
+    .cal-day-name { opacity: 0.65; font-weight: 600; padding: 4px 0; text-transform: uppercase; font-size: 0.68rem; }
+    .cal-day {
+      padding: 7px 0; border-radius: 8px; cursor: default;
+      position: relative; transition: all 0.2s; font-weight: 500;
+    }
+    .cal-day:hover { background: rgba(255,255,255,0.18); }
+    .cal-day.empty { opacity: 0; pointer-events: none; }
+    .cal-day.today {
+      box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.8);
+      font-weight: 700;
+    }
+    
+    /* Highlighted event dates */
+    .cal-day.event-day {
+      cursor: pointer;
+      font-weight: 800 !important;
+      border-radius: 50% !important;
+      transition: transform 0.18s, box-shadow 0.18s;
+    }
+    .cal-day.event-day:hover {
+      transform: scale(1.18);
+    }
+    
+    /* Clean-up / Segregation Drive Day highlight (Green glow) */
+    .cal-day.drive-day {
+      background: #b9f6ca !important;
+      color: #1b5e20 !important;
+      box-shadow: 0 0 12px rgba(185,246,202,0.85);
+    }
+    .cal-day.drive-day::after {
+      content: '•'; position: absolute; bottom: -3px; left: 50%;
+      transform: translateX(-50%); font-size: 11px; line-height: 1;
+      color: #1b5e20;
+    }
+    
+    /* Campus Event / Workshop Day highlight (Amber/Gold glow) */
+    .cal-day.general-event-day {
+      background: #ffe082 !important;
+      color: #5d4037 !important;
+      box-shadow: 0 0 12px rgba(255,224,130,0.85);
+    }
+    .cal-day.general-event-day::after {
+      content: '•'; position: absolute; bottom: -3px; left: 50%;
+      transform: translateX(-50%); font-size: 11px; line-height: 1;
+      color: #5d4037;
+    }
+    
+    .cal-day.selected-day {
+      outline: 2.5px solid #ffffff !important;
+      outline-offset: 2px !important;
+      transform: scale(1.15) !important;
+      z-index: 2;
+    }
+    
+    /* Calendar Legend */
+    .cal-legend {
+      display: flex; justify-content: center; gap: 12px;
+      margin-top: 1rem; font-size: 0.72rem; opacity: 0.95; flex-wrap: wrap;
+    }
+    .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+    .dot-drive { background: #b9f6ca; box-shadow: 0 0 6px #b9f6ca; }
+    .dot-event { background: #ffe082; box-shadow: 0 0 6px #ffe082; }
+    .dot-today { background: transparent; border: 1.5px solid #ffffff; }
+    
+    /* Selected date preview card in calendar sidebar */
+    .cal-day-detail {
+      margin-top: 1rem; padding: 12px; border-radius: 12px;
+      background: rgba(0,0,0,0.22); text-align: left;
+      font-size: 0.78rem; border: 1px solid rgba(255,255,255,0.15);
+      animation: fadeIn 0.2s ease;
+    }
+    .cal-day-detail-title { font-weight: 700; color: #ffffff; font-size: 0.85rem; margin-bottom: 2px; }
+    .cal-day-detail-meta { opacity: 0.85; font-size: 0.72rem; margin-bottom: 6px; }
+    .cal-day-detail-link {
+      color: #b9f6ca; font-weight: 600; text-decoration: underline;
+      cursor: pointer; display: inline-block; font-size: 0.75rem;
+    }
+    
+    .events-admin-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 6px 16px; border-radius: 20px; font-size: 0.78rem;
+      font-weight: 600; background: rgba(46,125,50,0.08);
+      color: var(--green-dark); border: 1px solid rgba(46,125,50,0.25);
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+    }
+    .events-admin-badge:hover {
+      background: var(--green-main); color: var(--white);
+      box-shadow: 0 4px 12px rgba(46,125,50,0.2);
+    }
+
+    .events-list { display: flex; flex-direction: column; gap: 1.2rem; }
+    .event-card {
+      display: flex; gap: 1.5rem; align-items: flex-start;
+      background: var(--off-white); border-radius: var(--radius);
+      padding: 1.5rem; border: 1px solid var(--green-pale);
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+    }
+    .event-card:hover { transform: translateX(6px); box-shadow: var(--shadow); }
+    .event-card.card-pulse {
+      animation: cardPulse 1.8s ease-in-out;
+      border-color: var(--green-main) !important;
+      background: #f1f8e9 !important;
+    }
+    @keyframes cardPulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 rgba(56,142,60,0); }
+      25% { transform: scale(1.02); box-shadow: 0 0 0 5px rgba(102,187,106,0.5); }
+      60% { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(102,187,106,0.3); }
+      100% { transform: scale(1); box-shadow: 0 0 0 rgba(56,142,60,0); }
+    }
+    .event-date-box {
+      min-width: 56px; background: var(--green-main); color: var(--white);
+      border-radius: var(--radius-sm); padding: 10px 8px; text-align: center;
+      flex-shrink: 0; box-shadow: 0 4px 12px rgba(46,125,50,0.2);
+    }
+    .event-date-box.box-drive { background: #1b5e20; }
+    .event-date-box .day { font-size: 1.6rem; font-weight: 800; line-height: 1; }
+    .event-date-box .month { font-size: 0.7rem; font-weight: 600; opacity: 0.9; text-transform: uppercase; }
+    .event-date-box .year { font-size: 0.65rem; opacity: 0.8; font-weight: 500; }
+    .event-info h3 { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.4rem; }
+    .event-info p { font-size: 0.85rem; color: var(--text-light); line-height: 1.5; }
+    .event-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.6rem; }
+    .event-meta span {
+      font-size: 0.78rem; color: var(--text-light);
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .event-tag {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .tag-drive { background: #e8f5e9; color: var(--green-dark); }
+    .tag-plantation { background: #e8f5e9; color: #2e7d32; }
+    .tag-ewaste { background: #e1f5fe; color: #0277bd; }
+    .tag-plasticfree { background: #fce4ec; color: #c2185b; }
+    .tag-workshop { background: #fff8e1; color: #f57f17; }
+    .tag-campaign { background: #e3f2fd; color: #01579b; }
+    .tag-competition { background: #f3e5f5; color: #6a1b9a; }
+    .tag-volunteer { background: #ede7f6; color: #512da8; }
+
+    /* ===================== ADMIN BUTTONS & MODAL ===================== */
+    .nav-admin-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 18px; border-radius: 24px; font-weight: 600;
+      font-size: 0.88rem; cursor: pointer;
+      background: rgba(46,125,50,0.08); color: var(--green-dark) !important;
+      border: 1.5px solid var(--green-main);
+      font-family: 'Poppins', sans-serif;
+      transition: all 0.25s ease; text-decoration: none;
+    }
+    .nav-admin-btn:hover {
+      background: var(--green-main) !important; color: var(--white) !important;
+      box-shadow: 0 4px 14px rgba(46,125,50,0.25); transform: translateY(-1px);
+    }
+    .nav-admin-btn::after { display: none !important; }
+    .mobile-admin-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--green-bg); padding: 10px 14px; border-radius: 10px;
+      color: var(--green-dark) !important; font-weight: 700 !important;
+      border: 1px solid var(--green-pale);
+    }
+
+    #adminLoginModal {
+      position: fixed; inset: 0; z-index: 99999;
+      background: rgba(10,31,10,0.78);
+      backdrop-filter: blur(8px);
+      display: none; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    #adminLoginModal.show { display: flex; }
+    .admin-modal-box {
+      background: var(--white);
+      border: 1px solid var(--green-pale);
+      border-radius: 20px; padding: 2.4rem;
+      width: 100%; max-width: 420px;
+      box-shadow: 0 25px 60px rgba(10,31,10,0.4);
+      position: relative;
+      animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      text-align: center;
+    }
+    @keyframes modalPop {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .admin-modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; font-size: 1.3rem;
+      cursor: pointer; color: var(--text-light);
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .admin-modal-close:hover {
+      background: var(--green-bg); color: var(--green-dark);
+    }
+    .admin-modal-logo {
+      font-size: 2.8rem; line-height: 1; margin-bottom: 0.5rem;
+    }
+    .admin-modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; font-weight: 800; color: var(--green-dark);
+      margin-bottom: 0.3rem;
+    }
+    .admin-modal-sub {
+      font-size: 0.82rem; color: var(--text-light); margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .admin-pw-wrap {
+      position: relative; margin-bottom: 1rem; text-align: left;
+    }
+    .admin-pw-wrap input {
+      width: 100%; padding: 13px 44px 13px 16px;
+      border-radius: 12px; border: 1.5px solid var(--green-pale);
+      font-family: 'Poppins', sans-serif; font-size: 0.95rem;
+      color: var(--text-dark); background: var(--off-white);
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .admin-pw-wrap input:focus {
+      border-color: var(--green-main);
+      box-shadow: 0 0 0 3px rgba(56,142,60,0.15);
+    }
+    .admin-pw-toggle {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; font-size: 1.1rem;
+      color: var(--text-light); padding: 4px;
+    }
+    .admin-modal-btn {
+      width: 100%; padding: 13px; border-radius: 12px;
+      background: var(--green-main); color: var(--white);
+      font-family: 'Poppins', sans-serif; font-weight: 700;
+      font-size: 0.95rem; border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 16px rgba(56,142,60,0.3);
+    }
+    .admin-modal-btn:hover {
+      background: var(--green-dark); transform: translateY(-1px);
+    }
+    .admin-modal-err {
+      margin-top: 0.8rem; font-size: 0.8rem; color: #d32f2f;
+      display: none; font-weight: 500;
+    }
+    .admin-modal-hint {
+      font-size: 0.72rem; color: var(--text-light); margin-top: 1rem;
+      opacity: 0.85;
+    }
+    .admin-direct-link {
+      display: inline-block; margin-top: 0.6rem; font-size: 0.78rem;
+      color: var(--green-main); font-weight: 600; text-decoration: underline;
+    }
+
+    /* ===================== TEAM SECTION ===================== */
+    #team { background: linear-gradient(180deg, var(--green-bg) 0%, var(--white) 100%); }
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+    .team-card {
+      background: var(--white); border-radius: var(--radius);
+      padding: 2rem 1.5rem; text-align: center;
+      border: 1px solid var(--green-pale);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .team-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-lg); }
+    .team-avatar {
+      width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 1rem;
+      background: linear-gradient(135deg, var(--green-pale), var(--green-light));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; border: 3px solid var(--green-main);
+      position: relative; overflow: hidden;
+    }
+    .team-name { font-size: 1rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.3rem; }
+    .team-role {
+      font-size: 0.78rem; color: var(--white);
+      background: var(--green-main); padding: 3px 12px; border-radius: 12px;
+      display: inline-block; margin-bottom: 0.8rem;
+    }
+    .team-dept { font-size: 0.8rem; color: var(--text-light); }
+    .team-advisor { border: 2px solid var(--accent-yellow); }
+    .team-advisor .team-role { background: var(--earth-brown); }
+
+    /* ===================== GALLERY SECTION ===================== */
+    #gallery { background: var(--earth-light); }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto;
+      gap: 1rem;
+    }
+    .gallery-item {
+      border-radius: var(--radius-sm); overflow: hidden;
+      background: linear-gradient(135deg, var(--green-pale), var(--green-light));
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 0.5rem; cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .gallery-item:hover { transform: scale(1.03); box-shadow: var(--shadow-lg); z-index: 2; }
+    .gallery-item.tall { grid-row: span 2; }
+    .gallery-item.wide { grid-column: span 2; }
+    .gallery-placeholder {
+      width: 100%; aspect-ratio: 4/3; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 0.5rem;
+      padding: 1.5rem;
+    }
+    .gallery-item.tall .gallery-placeholder { aspect-ratio: 3/5; }
+    .gallery-item.wide .gallery-placeholder { aspect-ratio: 16/7; }
+    .gallery-placeholder .g-icon { font-size: 2.5rem; opacity: 0.5; }
+    .gallery-placeholder .g-label { font-size: 0.8rem; color: var(--green-dark); font-weight: 600; opacity: 0.7; text-align: center; }
+    .gallery-overlay {
+      position: absolute; inset: 0; background: rgba(27,94,32,0.7);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.3s; border-radius: var(--radius-sm);
+    }
+    .gallery-overlay span { color: var(--white); font-size: 0.85rem; font-weight: 600; }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-note {
+      text-align: center; margin-top: 2rem; font-size: 0.9rem;
+      color: var(--text-light); background: var(--white); padding: 1rem;
+      border-radius: var(--radius-sm); border: 1px dashed var(--green-light);
+    }
+
+    /* ===================== JOIN SECTION ===================== */
+    #join { background: var(--white); }
+    .join-wrapper {
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 4rem; align-items: start;
+    }
+    .join-info { }
+    .perks { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+    .perk {
+      display: flex; gap: 1rem; align-items: flex-start;
+      background: var(--green-bg); padding: 1rem 1.2rem; border-radius: var(--radius-sm);
+    }
+    .perk .p-icon { font-size: 1.5rem; }
+    .perk-text h4 { font-size: 0.95rem; font-weight: 700; color: var(--text-dark); }
+    .perk-text p { font-size: 0.82rem; color: var(--text-light); line-height: 1.5; }
+    .join-form {
+      background: var(--off-white); border-radius: var(--radius);
+      padding: 2.5rem; border: 1px solid var(--green-pale);
+      box-shadow: var(--shadow);
+    }
+    .form-title { font-size: 1.3rem; font-weight: 700; color: var(--text-dark); margin-bottom: 0.3rem; }
+    .form-sub { font-size: 0.85rem; color: var(--text-light); margin-bottom: 2rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+    .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--text-mid); }
+    .form-group input, .form-group select, .form-group textarea {
+      font-family: 'Poppins', sans-serif;
+      padding: 12px 16px; border: 1.5px solid var(--green-pale);
+      border-radius: var(--radius-sm); font-size: 0.9rem;
+      color: var(--text-dark); background: var(--white);
+      transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: var(--green-main); box-shadow: 0 0 0 3px rgba(56,142,60,0.15);
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-submit {
+      width: 100%; justify-content: center; margin-top: 0.5rem;
+    }
+    .success-msg {
+      display: none; background: var(--green-pale); color: var(--green-dark);
+      padding: 1rem; border-radius: var(--radius-sm); font-weight: 600;
+      text-align: center; margin-top: 1rem; font-size: 0.9rem;
+    }
+
+    /* ===================== CONTACT SECTION ===================== */
+    #contact {
+      background: linear-gradient(135deg, var(--green-dark), #0a3d0a);
+      color: var(--white);
+    }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+    .contact-info h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .contact-info p { color: rgba(255,255,255,0.7); line-height: 1.7; margin-bottom: 2rem; }
+    .contact-items { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-item {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.08); padding: 1rem 1.5rem;
+      border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.1);
+    }
+    .contact-item .c-icon { font-size: 1.5rem; }
+    .contact-item .c-text { font-size: 0.9rem; color: rgba(255,255,255,0.85); }
+    .contact-item .c-label { font-size: 0.72rem; color: rgba(255,255,255,0.5); margin-bottom: 2px; }
+    .social-links { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
+    .social-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.1); color: var(--white);
+      padding: 10px 20px; border-radius: 24px; font-size: 0.85rem; font-weight: 600;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .social-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .contact-map {
+      border-radius: var(--radius); overflow: hidden;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 300px; gap: 1rem;
+      position: relative;
+    }
+    .contact-map.has-map {
+      padding: 0;
+      display: block;
+      min-height: 350px;
+    }
+    .contact-map iframe {
+      width: 100%;
+      height: 100%;
+      min-height: 350px;
+      border: 0;
+      display: block;
+    }
+    .contact-map .map-icon { font-size: 4rem; opacity: 0.4; }
+    .contact-map p { color: rgba(255,255,255,0.5); font-size: 0.9rem; text-align: center; padding: 0 2rem; }
+    .contact-map .address { color: rgba(255,255,255,0.8); font-weight: 600; font-size: 0.95rem; }
+
+    /* ===================== FOOTER ===================== */
+    footer {
+      background: #0a1f0a; color: rgba(255,255,255,0.5);
+      text-align: center; padding: 2rem 5%;
+      font-size: 0.85rem;
+    }
+    footer .footer-logo { color: #66bb6a; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+    footer a { color: #66bb6a; }
+
+    /* ===================== ANIMATIONS ===================== */
+    .fade-up {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-up.visible { opacity: 1; transform: translateY(0); }
+    .stagger-1 { transition-delay: 0.1s; }
+    .stagger-2 { transition-delay: 0.2s; }
+    .stagger-3 { transition-delay: 0.3s; }
+    .stagger-4 { transition-delay: 0.4s; }
+    .stagger-5 { transition-delay: 0.5s; }
+    .stagger-6 { transition-delay: 0.6s; }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .about-grid, .events-layout, .join-wrapper, .contact-grid { grid-template-columns: 1fr; }
+      .events-sidebar { position: static; }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-item.tall { grid-row: span 1; }
+      .gallery-item.wide { grid-column: span 2; }
+      .about-card { position: static; margin-top: 1rem; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 70px 4%; }
+      .hero-stats { gap: 1.5rem; }
+      .hero-actions { flex-direction: column; align-items: flex-start; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-item.wide, .gallery-item.tall { grid-column: span 1; grid-row: span 1; }
+      .form-row { grid-template-columns: 1fr; }
+      .about-values { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">
+    <span class="leaf-icon">🌿</span>
+    <span>Green Guardians</span>
+  </div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#what-we-do">What We Do</a>
+    <a href="#events">Events</a>
+    <a href="#team">Team</a>
+    <a href="#gallery">Gallery</a>
+    <a href="#contact">Contact</a>
+    <a href="#join" class="nav-cta">Join Us</a>
+    <a href="javascript:void(0)" onclick="openAdminModal()" class="nav-admin-btn" title="Admin Login &amp; Portal">🔐 Admin</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about" onclick="closeMenu()">About</a>
+  <a href="#what-we-do" onclick="closeMenu()">What We Do</a>
+  <a href="#events" onclick="closeMenu()">Events</a>
+  <a href="#team" onclick="closeMenu()">Team</a>
+  <a href="#gallery" onclick="closeMenu()">Gallery</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+  <a href="#join" onclick="closeMenu()" style="color:var(--green-main);font-weight:700;">Join Us →</a>
+  <a href="javascript:void(0)" onclick="closeMenu();openAdminModal()" class="mobile-admin-btn"><span>🔐 Admin Login &amp; Updates</span><span>→</span></a>
+</div>
+
+<!-- ===================== HERO ===================== -->
+<section id="hero">
+  <div class="hero-shapes">
+    <div class="hero-shape hero-shape-1"></div>
+    <div class="hero-shape hero-shape-2"></div>
+    <div class="hero-shape hero-shape-3"></div>
+  </div>
+  <div class="hero-leaves">
+    <span class="floating-leaf">🌿</span>
+    <span class="floating-leaf">🍃</span>
+    <span class="floating-leaf">♻️</span>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">🏛️ &nbsp; NIELIT Campus — Swachh Campus Society</div>
+    <h1 class="hero-title">
+      <span class="accent">Green</span><br>Guardians
+    </h1>
+    <p class="hero-tagline">
+      Segregate<span class="dot">•</span>Reduce<span class="dot">•</span>Reuse
+    </p>
+    <p class="hero-desc">
+      Building a cleaner, greener campus — one drive, one habit, one student at a time.
+      Join us in transforming our college into a model of sustainability.
+    </p>
+    <div class="hero-actions">
+      <a href="#join" class="btn btn-primary">🌱 &nbsp; Join the Club</a>
+      <a href="#what-we-do" class="btn btn-outline">See What We Do →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Student Volunteers</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">80+</div>
+        <div class="stat-label">Drives Conducted</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2T+</div>
+        <div class="stat-label">Waste Recycled</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Campus Zones Adopted</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span class="arrow">↓</span>
+    Scroll to explore
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-visual fade-up">
+      <!-- Club photo: replaced by admin-uploaded image if available -->
+      <div class="about-img-placeholder" id="aboutImgWrap">
+        <span class="big-icon">🌍</span>
+        <p>📸 Club photo or campus image here</p>
+      </div>
+      <div class="about-card" id="aboutCardWrap">
+        <span class="icon">🏆</span>
+        <div>
+          <div class="label">Recognized by</div>
+          <div class="value">College Administration</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-content">
+      <div class="section-tag fade-up">🌿 About Us</div>
+      <h2 class="section-title fade-up stagger-1">
+        Why We <span>Exist</span>
+      </h2>
+      <p class="section-subtitle fade-up stagger-2" style="margin-bottom:1rem;">
+        Our campus generates hundreds of kilograms of waste every single day —
+        most of it unsegregated, ending up in landfills that harm our environment
+        and community. We refuse to accept that as the norm.
+      </p>
+      <p style="font-size:0.95rem;color:var(--text-light);line-height:1.8;" class="fade-up stagger-3">
+        <strong style="color:var(--text-dark);">Green Guardians</strong> was founded by students who believe every campus has the power
+        to lead by example. Our mission is to build a cleaner, more sustainable NIELIT campus
+        through waste segregation, recycling, composting, and student-led awareness initiatives —
+        creating habits that last a lifetime.
+      </p>
+
+      <div class="about-values fade-up stagger-4">
+        <div class="value-chip"><span>♻️</span> Zero-Waste Vision</div>
+        <div class="value-chip"><span>🤝</span> Community-Driven</div>
+        <div class="value-chip"><span>🌱</span> Sustainable Habits</div>
+        <div class="value-chip"><span>📢</span> Awareness First</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHAT WE DO ===================== -->
+<section id="what-we-do">
+  <div class="text-center">
+    <div class="section-tag fade-up">♻️ Our Activities</div>
+    <h2 class="section-title fade-up stagger-1">What We <span>Do</span></h2>
+    <p class="section-subtitle fade-up stagger-2">
+      From daily drives to monthly campaigns — every action counts towards a cleaner campus.
+    </p>
+  </div>
+
+  <div class="activities-grid">
+    <div class="activity-card fade-up stagger-1">
+      <div class="activity-icon icon-bg-1">🗑️</div>
+      <h3>Waste Segregation Drives</h3>
+      <p>Regular wet, dry, and e-waste segregation drives across hostels, departments, and common areas to ensure waste reaches the right bins.</p>
+    </div>
+    <div class="activity-card fade-up stagger-2">
+      <div class="activity-icon icon-bg-2">🌱</div>
+      <h3>Composting Pit & Campus Garden</h3>
+      <p>We convert organic waste into compost that nourishes our campus garden — a living example of a closed-loop waste system.</p>
+    </div>
+    <div class="activity-card fade-up stagger-3">
+      <div class="activity-icon icon-bg-3">💻</div>
+      <h3>E-Waste Collection Drives</h3>
+      <p>Collecting old electronics, batteries, and cables for responsible recycling — keeping hazardous materials out of landfills.</p>
+    </div>
+    <div class="activity-card fade-up stagger-4">
+      <div class="activity-icon icon-bg-4">🚫🥤</div>
+      <h3>Plastic-Free Campus Initiative</h3>
+      <p>Distributing cloth bags, promoting reusable bottles, and working with the canteen to eliminate single-use plastic on campus.</p>
+    </div>
+    <div class="activity-card fade-up stagger-5">
+      <div class="activity-icon icon-bg-5">✂️</div>
+      <h3>Upcycling Workshops</h3>
+      <p>Creative hands-on sessions that teach students how to transform waste materials into useful, beautiful products.</p>
+    </div>
+    <div class="activity-card fade-up stagger-6">
+      <div class="activity-icon icon-bg-6">🏆</div>
+      <h3>Adopt a Zone Competition</h3>
+      <p>Hostels and departments compete to maintain the cleanest zones — gamifying cleanliness to build lasting habits and healthy rivalry.</p>
+    </div>
+    <div class="activity-card fade-up stagger-1">
+      <div class="activity-icon icon-bg-7">📢</div>
+      <h3>Awareness Campaigns</h3>
+      <p>Posters, social media campaigns, flash mobs, and street plays that spread the message of sustainability across the campus community.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EVENTS ===================== -->
+<section id="events">
+  <div class="text-center" style="margin-bottom:2.2rem;">
+    <div class="section-tag fade-up">📅 Upcoming</div>
+    <h2 class="section-title fade-up stagger-1">Events &amp; <span>Drives</span></h2>
+    <p class="section-subtitle fade-up stagger-2" style="margin-bottom:0.8rem;">
+      Mark your calendars — join us at our next campus initiative!
+    </p>
+    <div class="fade-up stagger-3" style="margin-bottom:2rem;">
+      <a href="javascript:void(0)" onclick="openAdminModal()" class="events-admin-badge" title="Login as Admin to add or update events and highlight dates">
+        ⚙️ Admin: Update Events, Drives &amp; Calendar Dates
+      </a>
+    </div>
+  </div>
+
+  <div class="events-layout">
+    <div class="events-sidebar fade-up">
+      <div class="event-calendar" id="eventCalendar">
+        <div class="cal-nav">
+          <button type="button" class="cal-nav-btn" id="calPrevBtn" aria-label="Previous Month" title="Previous Month">‹</button>
+          <div class="cal-month-wrap">
+            <div class="cal-header">📅 Event Calendar</div>
+            <div class="cal-month" id="calMonthTitle">October 2026</div>
+          </div>
+          <button type="button" class="cal-nav-btn" id="calNextBtn" aria-label="Next Month" title="Next Month">›</button>
+        </div>
+        <div class="cal-grid" id="calGrid">
+          <div class="cal-day-name">Su</div>
+          <div class="cal-day-name">Mo</div>
+          <div class="cal-day-name">Tu</div>
+          <div class="cal-day-name">We</div>
+          <div class="cal-day-name">Th</div>
+          <div class="cal-day-name">Fr</div>
+          <div class="cal-day-name">Sa</div>
+          <!-- Days will be dynamically generated by JavaScript with event & drive highlights -->
+        </div>
+        <div class="cal-legend">
+          <span class="legend-item"><span class="legend-dot dot-drive"></span> Drive</span>
+          <span class="legend-item"><span class="legend-dot dot-event"></span> Event</span>
+          <span class="legend-item"><span class="legend-dot dot-today"></span> Today</span>
+        </div>
+        <div class="cal-day-detail" id="calDayDetail" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="events-list" id="eventsListContainer">
+      <div class="event-card fade-up stagger-1">
+        <div class="event-date-box">
+          <div class="day">05</div>
+          <div class="month">Oct</div>
+        </div>
+        <div class="event-info">
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">
+            <span class="event-tag tag-drive">🗑️ Drive</span>
+          </div>
+          <h3>Campus-Wide Waste Segregation Drive</h3>
+          <p>All hostel blocks and academic buildings participate in a synchronized wet/dry/e-waste segregation effort.</p>
+          <div class="event-meta">
+            <span>🕘 9:00 AM – 12:00 PM</span>
+            <span>📍 All Campus Zones</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card fade-up stagger-2">
+        <div class="event-date-box">
+          <div class="day">12</div>
+          <div class="month">Oct</div>
+        </div>
+        <div class="event-info">
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">
+            <span class="event-tag tag-workshop">✂️ Workshop</span>
+          </div>
+          <h3>Upcycling & Craft Workshop</h3>
+          <p>Transform plastic bottles, cardboard, and paper into art. Open to all departments — no prior experience needed!</p>
+          <div class="event-meta">
+            <span>🕑 2:00 PM – 5:00 PM</span>
+            <span>📍 Art Block, Room 204</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card fade-up stagger-3">
+        <div class="event-date-box">
+          <div class="day">19</div>
+          <div class="month">Oct</div>
+        </div>
+        <div class="event-info">
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">
+            <span class="event-tag tag-campaign">📢 Campaign</span>
+          </div>
+          <h3>Plastic-Free Pledge Drive</h3>
+          <p>Distribute cloth bags and reusable bottles at the campus gate, collect pledges from 500+ students and faculty.</p>
+          <div class="event-meta">
+            <span>🕗 7:30 AM – 10:00 AM</span>
+            <span>📍 Main Gate & Canteen</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="event-card fade-up stagger-4">
+        <div class="event-date-box">
+          <div class="day">26</div>
+          <div class="month">Oct</div>
+        </div>
+        <div class="event-info">
+          <div style="display:flex;gap:0.5rem;margin-bottom:0.4rem;">
+            <span class="event-tag tag-competition">🏆 Competition</span>
+          </div>
+          <h3>Adopt a Zone — Monthly Finale</h3>
+          <p>Announcement of the cleanest hostel block and department of the month. Winners receive the Golden Leaf Award! 🌿</p>
+          <div class="event-meta">
+            <span>🕐 1:00 PM – 2:30 PM</span>
+            <span>📍 College Auditorium</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TEAM ===================== -->
+<section id="team">
+  <div class="text-center">
+    <div class="section-tag fade-up">👥 The People</div>
+    <h2 class="section-title fade-up stagger-1">Meet Our <span>Team</span></h2>
+    <p class="section-subtitle fade-up stagger-2">
+      Passionate students and a dedicated faculty advisor driving change on campus.
+    </p>
+  </div>
+
+  <div class="team-grid">
+    <div class="team-card team-advisor fade-up stagger-1">
+      <div class="team-avatar">👨‍🏫</div>
+      <div class="team-name">Dr. R. K. Sharma</div>
+      <div class="team-role">Faculty Advisor</div>
+      <div class="team-dept">Dept. of Electronics</div>
+    </div>
+    <div class="team-card fade-up stagger-2">
+      <div class="team-avatar">🧑‍🎓</div>
+      <div class="team-name">Aarav Mehta</div>
+      <div class="team-role">President</div>
+      <div class="team-dept">CSE — 3rd Year</div>
+    </div>
+    <div class="team-card fade-up stagger-3">
+      <div class="team-avatar">👩‍🎓</div>
+      <div class="team-name">Priya Singh</div>
+      <div class="team-role">Vice President</div>
+      <div class="team-dept">ECE — 3rd Year</div>
+    </div>
+    <div class="team-card fade-up stagger-4">
+      <div class="team-avatar">🧑‍🎓</div>
+      <div class="team-name">Rohan Gupta</div>
+      <div class="team-role">Secretary</div>
+      <div class="team-dept">IT — 2nd Year</div>
+    </div>
+    <div class="team-card fade-up stagger-5">
+      <div class="team-avatar">👩‍🎓</div>
+      <div class="team-name">Sneha Patel</div>
+      <div class="team-role">Treasurer</div>
+      <div class="team-dept">CSE — 2nd Year</div>
+    </div>
+    <div class="team-card fade-up stagger-1">
+      <div class="team-avatar">🧑‍🎓</div>
+      <div class="team-name">Karan Verma</div>
+      <div class="team-role">Event Coordinator</div>
+      <div class="team-dept">ME — 3rd Year</div>
+    </div>
+    <div class="team-card fade-up stagger-2">
+      <div class="team-avatar">👩‍🎓</div>
+      <div class="team-name">Anjali Rao</div>
+      <div class="team-role">Event Coordinator</div>
+      <div class="team-dept">ECE — 2nd Year</div>
+    </div>
+    <div class="team-card fade-up stagger-3">
+      <div class="team-avatar">👩‍🎓</div>
+      <div class="team-name">Riya Nair</div>
+      <div class="team-role">Publicity Lead</div>
+      <div class="team-dept">IT — 2nd Year</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GALLERY ===================== -->
+<section id="gallery">
+  <div class="text-center">
+    <div class="section-tag fade-up">📸 Memories</div>
+    <h2 class="section-title fade-up stagger-1">Our <span>Gallery</span></h2>
+    <p class="section-subtitle fade-up stagger-2">
+      Moments from our drives, workshops, and campaigns that tell our story.
+    </p>
+  </div>
+
+  <div class="gallery-grid">
+    <div class="gallery-item tall fade-up stagger-1">
+      <div class="gallery-placeholder">
+        <span class="g-icon">🗑️</span>
+        <span class="g-label">Waste Segregation Drive<br>March 2026</span>
+      </div>
+      <div class="gallery-overlay"><span>📸 View Photo</span></div>
+    </div>
+    <div class="gallery-item fade-up stagger-2">
+      <div class="gallery-placeholder">
+        <span class="g-icon">🌱</span>
+        <span class="g-label">Compost Pit Launch</span>
+      </div>
+      <div class="gallery-overlay"><span>📸 View Photo</span></div>
+    </div>
+    <div class="gallery-item fade-up stagger-3">
+      <div class="gallery-placeholder">
+        <span class="g-icon">✂️</span>
+        <span class="g-label">Upcycling Workshop</span>
+      </div>
+      <div class="gallery-overlay"><span>📸 View Photo</span></div>
+    </div>
+    <div class="gallery-item wide fade-up stagger-4">
+      <div class="gallery-placeholder">
+        <span class="g-icon">🏆</span>
+        <span class="g-label">Adopt a Zone Award Ceremony — All department heads and winners</span>
+      </div>
+      <div class="gallery-overlay"><span>📸 View Photo</span></div>
+    </div>
+    <div class="gallery-item fade-up stagger-5">
+      <div class="gallery-placeholder">
+        <span class="g-icon">🚫🥤</span>
+        <span class="g-label">Plastic-Free Pledge Drive</span>
+      </div>
+      <div class="gallery-overlay"><span>📸 View Photo</span></div>
+    </div>
+    <div class="gallery-item fade-up stagger-6">
+      <div class="gallery-placeholder">
+        <span class="g-icon">💻</span>
+        <span class="g-label">E-Waste Collection</span>
+      </div>
+      <div class="gallery-overlay"><span>📸 View Photo</span></div>
+    </div>
+    <div class="gallery-item fade-up stagger-1">
+      <div class="gallery-placeholder">
+        <span class="g-icon">🌿</span>
+        <span class="g-label">Campus Garden Visit</span>
+      </div>
+      <div class="gallery-overlay"><span>📸 View Photo</span></div>
+    </div>
+  </div>
+
+  <div class="gallery-note fade-up">
+    📷 <strong>Want to see your photos here?</strong> Share your volunteer moments using <strong>#GreenGuardiansNIELIT</strong> on Instagram!
+  </div>
+</section>
+
+<!-- ===================== JOIN ===================== -->
+<section id="join">
+  <div class="join-wrapper">
+    <div class="join-info">
+      <div class="section-tag fade-up">🌱 Volunteer</div>
+      <h2 class="section-title fade-up stagger-1">Join the <span>Movement</span></h2>
+      <p style="font-size:0.95rem;color:var(--text-light);line-height:1.8;margin-bottom:1rem;" class="fade-up stagger-2">
+        Whether you have five minutes or five hours a week — there's a place for you in Green Guardians.
+        No experience needed. Just the will to make a difference.
+      </p>
+
+      <div class="perks fade-up stagger-3">
+        <div class="perk">
+          <span class="p-icon">🏅</span>
+          <div class="perk-text">
+            <h4>Official Certificate</h4>
+            <p>Get a certified volunteering certificate recognised by the college.</p>
+          </div>
+        </div>
+        <div class="perk">
+          <span class="p-icon">🌐</span>
+          <div class="perk-text">
+            <h4>Networking & Leadership</h4>
+            <p>Lead drives, organise events, and build real-world project experience.</p>
+          </div>
+        </div>
+        <div class="perk">
+          <span class="p-icon">🎨</span>
+          <div class="perk-text">
+            <h4>Workshops & Skill Building</h4>
+            <p>Attend exclusive upcycling, design, and sustainability workshops.</p>
+          </div>
+        </div>
+        <div class="perk">
+          <span class="p-icon">🤝</span>
+          <div class="perk-text">
+            <h4>Community & Friendships</h4>
+            <p>Join a vibrant, passionate community of like-minded changemakers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="join-form fade-up stagger-2">
+      <h3 class="form-title">🌿 Sign Up to Volunteer</h3>
+      <p class="form-sub">Takes less than 2 minutes. We'll reach out within 24 hours!</p>
+      <form id="joinForm" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fname">First Name *</label>
+            <input type="text" id="fname" placeholder="Aarav" required />
+          </div>
+          <div class="form-group">
+            <label for="lname">Last Name *</label>
+            <input type="text" id="lname" placeholder="Mehta" required />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Gmail Address *</label>
+          <input type="email" id="email" placeholder="yourname@gmail.com" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dept">Course *</label>
+            <select id="dept" required>
+              <option value="" disabled selected>Select your course</option>
+              <option value="B.Tech">B.Tech</option>
+              <option value="MCA">MCA</option>
+              <option value="BCA">BCA</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="year">Year of Study *</label>
+            <select id="year" required>
+              <option value="" disabled selected>Select year</option>
+              <option>1st Year</option>
+              <option>2nd Year</option>
+              <option>3rd Year</option>
+              <option>4th Year</option>
+              <option>Postgraduate</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="phone">WhatsApp Number (optional)</label>
+          <input type="tel" id="phone" placeholder="+91 98765 43210" />
+        </div>
+        <div class="form-group">
+          <label for="motivation">Why do you want to join? *</label>
+          <textarea id="motivation" placeholder="Tell us what drives your passion for a cleaner campus..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary form-submit">
+          🌱 &nbsp; Submit My Application
+        </button>
+        <div class="success-msg" id="successMsg">
+          🎉 Thank you for joining! We'll contact you within 24 hours. Welcome to the Green Guardians family!
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section id="contact">
+  <div class="contact-grid">
+    <div class="contact-info">
+      <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#a5d6a7;">📬 Get in Touch</div>
+      <h2 class="section-title fade-up" style="color:var(--white);margin-top:1rem;">
+        Let's <span>Connect</span>
+      </h2>
+      <p class="fade-up stagger-1">
+        Have questions, suggestions, or want to partner with us? Reach out — 
+        we love hearing from fellow eco-warriors!
+      </p>
+
+      <div class="contact-items fade-up stagger-2">
+        <div class="contact-item">
+          <span class="c-icon">📧</span>
+          <div>
+            <div class="c-label">Email Us</div>
+            <div class="c-text">greenguardians@nielit.edu.in</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <span class="c-icon">📍</span>
+          <div>
+            <div class="c-label">We're Based At</div>
+            <div class="c-text">NIELIT Campus, Student Activity Centre, Room 12</div>
+          </div>
+        </div>
+        <div class="contact-item">
+          <span class="c-icon">🕐</span>
+          <div>
+            <div class="c-label">Club Hours</div>
+            <div class="c-text">Mon–Fri: 4:00 PM – 6:00 PM</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="social-links fade-up stagger-3">
+        <a href="#" class="social-btn">📸 &nbsp; Instagram</a>
+        <a href="#" class="social-btn">💬 &nbsp; WhatsApp Group</a>
+        <a href="#" class="social-btn">📘 &nbsp; Facebook</a>
+        <a href="#" class="social-btn">🐦 &nbsp; Twitter / X</a>
+      </div>
+    </div>
+
+    <!-- Live Campus Google Map -->
+    <div class="contact-map has-map fade-up stagger-2" id="siteContactMap">
+      <iframe
+        id="siteMapIframe"
+        src="https://maps.google.com/maps?q=NIELIT+Campus+India&t=&z=15&ie=UTF8&iwloc=&output=embed"
+        width="100%" height="100%"
+        style="border:0;width:100%;height:100%;min-height:350px;display:block;"
+        allowfullscreen="" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer>
+  <div class="footer-logo">🌿 Green Guardians — NIELIT</div>
+  <p>Swachh Campus Society &nbsp;|&nbsp; Segregate. Reduce. Reuse.</p>
+  <p style="margin-top:0.5rem;">
+    Made with 💚 by Green Guardians volunteers &nbsp;|&nbsp; 
+    <a href="mailto:greenguardians@nielit.edu.in">greenguardians@nielit.edu.in</a>
+    &nbsp;|&nbsp;
+    <a href="javascript:void(0)" onclick="openAdminModal()" style="font-weight:600;color:var(--green-light);text-decoration:underline;">🔐 Admin Portal (Update Site)</a>
+  </p>
+</footer>
+
+<!-- ===================== JAVASCRIPT ===================== -->
+<script>
+  // --- Navbar scroll effect ---
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 30);
+  });
+
+  // --- Mobile menu ---
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+  });
+  function closeMenu() {
+    mobileMenu.classList.remove('open');
+  }
+
+  // --- Intersection Observer for fade-up animations ---
+  const faders = document.querySelectorAll('.fade-up');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+  faders.forEach(el => observer.observe(el));
+
+  // --- API Base Configuration ---
+  const API_BASE = (window.location.origin && window.location.origin.startsWith('http')) 
+    ? window.location.origin 
+    : 'http://127.0.0.1:8000';
+
+  // --- Live Database & Real-Time Sync Indicator ---
+  function updateDbIndicator(connected, customText) {
+    let badge = document.getElementById('dbLiveBadge');
+    if (!badge) {
+      badge = document.createElement('div');
+      badge.id = 'dbLiveBadge';
+      badge.style.cssText = 'position:fixed;bottom:14px;left:14px;z-index:9999;padding:6px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(0,0,0,0.25);transition:all 0.3s;backdrop-filter:blur(8px);cursor:default;';
+      document.body.appendChild(badge);
+    }
+    if (connected) {
+      badge.style.background = 'rgba(27,94,32,0.92)';
+      badge.style.color = '#e8f5e9';
+      badge.style.border = '1px solid #4caf50';
+      badge.innerHTML = `<span style="font-size:0.8rem">🟢</span> ${customText || 'Live Auto-Sync Active'}`;
+      badge.title = 'Real-time synchronization active: Changes made by admin update here automatically!';
+    } else {
+      badge.style.background = 'rgba(60,60,60,0.92)';
+      badge.style.color = '#ffcc80';
+      badge.style.border = '1px solid #ff9800';
+      badge.innerHTML = '<span style="font-size:0.8rem">🟡</span> Offline Mode';
+      badge.title = 'Server offline — using local browser cache';
+    }
+  }
+
+  // --- Form submission ---
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.form-submit');
+    const origBtnHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⏳ &nbsp; Submitting to Database...';
+
+    // ── Prepare application payload ──
+    const now = new Date();
+    const application = {
+      id: 'APP-' + now.getFullYear() + ('0'+(now.getMonth()+1)).slice(-2) + ('0'+now.getDate()).slice(-2) + '-' + Math.floor(Math.random()*9000+1000),
+      submittedAt: now.toISOString(),
+      status: 'pending',
+      firstName: document.getElementById('fname').value.trim(),
+      lastName:  document.getElementById('lname').value.trim(),
+      email:     document.getElementById('email').value.trim(),
+      dept:      document.getElementById('dept').value,
+      year:      document.getElementById('year').value,
+      phone:     document.getElementById('phone').value.trim(),
+      motivation:document.getElementById('motivation').value.trim(),
+      notes: ''
+    };
+
+    let savedToDB = false;
+    try {
+      const res = await fetch(`${API_BASE}/api/applications`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(application)
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.application && json.application.id) {
+          application.id = json.application.id;
+        }
+        savedToDB = true;
+        updateDbIndicator(true);
+      }
+    } catch(err) {
+      console.warn('Backend server unavailable, saving offline:', err);
+      updateDbIndicator(false);
+    }
+
+    // Always cache in localStorage as well
+    try {
+      const existing = JSON.parse(localStorage.getItem('gg_applications') || '[]');
+      existing.unshift(application);
+      localStorage.setItem('gg_applications', JSON.stringify(existing));
+    } catch(err) { console.warn('Could not save application locally:', err); }
+
+    // ── UI feedback ──
+    btn.textContent = '✅ Submitted!';
+    btn.disabled = true;
+    btn.style.background = 'var(--green-dark)';
+    const msgEl = document.getElementById('successMsg');
+    if (msgEl) {
+      msgEl.innerHTML = savedToDB
+        ? `<strong>🎉 Application Successfully Saved to Database!</strong><br>Application ID: <code>${application.id}</code>. Thank you for volunteering with Green Guardians!`
+        : `<strong>🎉 Application Received!</strong><br>Saved in offline mode. Thank you for volunteering with Green Guardians!`;
+      msgEl.style.display = 'block';
+    }
+    document.getElementById('joinForm').reset();
+    setTimeout(() => {
+      btn.innerHTML = '🌱 &nbsp; Submit My Application';
+      btn.disabled = false;
+      btn.style.background = '';
+      if (msgEl) msgEl.style.display = 'none';
+    }, 6000);
+  }
+
+  // ===== ADMIN PANEL & DATABASE DATA SYNC =====
+  function renderAllSectionsFromData(dataObj) {
+    if (!dataObj) return;
+
+    // --- Hero ---
+    const hero = dataObj.hero;
+    if (hero) {
+      const accentEl = document.querySelector('.hero-title .accent');
+      if (accentEl && hero.accentWord) accentEl.textContent = hero.accentWord;
+      const heroTitle = document.querySelector('.hero-title');
+      if (heroTitle && hero.mainWord) {
+        const br = heroTitle.querySelector('br');
+        if (br && br.nextSibling) br.nextSibling.textContent = '\n' + hero.mainWord + '\n';
+      }
+      const taglineEl = document.querySelector('.hero-tagline');
+      if (taglineEl && hero.tagline) {
+        const parts = hero.tagline.split('•').map(s => s.trim());
+        taglineEl.innerHTML = parts.map((p,i) => i < parts.length-1 ? p+'<span class="dot">•</span>' : p).join('');
+      }
+      const badgeEl = document.querySelector('.hero-badge');
+      if (badgeEl && hero.badge) badgeEl.innerHTML = '🏛️ &nbsp; ' + hero.badge;
+      const descEl = document.querySelector('.hero-desc');
+      if (descEl && hero.desc) descEl.textContent = hero.desc;
+      const statNums = document.querySelectorAll('.stat-num');
+      const statLabels = document.querySelectorAll('.stat-label');
+      if (hero.stats) {
+        [hero.stats.volunteers, hero.stats.drives, hero.stats.waste, hero.stats.zones]
+          .forEach((v,i) => { if (statNums[i] && v) statNums[i].textContent = v; });
+        [hero.stats.lVolunteers, hero.stats.lDrives, hero.stats.lWaste, hero.stats.lZones]
+          .forEach((l,i) => { if (statLabels[i] && l) statLabels[i].textContent = l; });
+      }
+    }
+
+    // --- About ---
+    const about = dataObj.about;
+    if (about) {
+      const abTag = document.querySelector('#about .section-tag');
+      if (abTag && about.tag) abTag.textContent = about.tag;
+      const abTitle = document.querySelector('#about .section-title');
+      if (abTitle && about.title) abTitle.innerHTML = about.title;
+      const abSub = document.querySelector('#about .section-subtitle');
+      if (abSub && about.subtitle) abSub.textContent = about.subtitle;
+      const recEl = document.querySelector('.about-card .value');
+      if (recEl && about.recognized) recEl.textContent = about.recognized;
+      const chips = document.querySelectorAll('.value-chip');
+      [about.v1, about.v2, about.v3, about.v4].forEach((v,i) => {
+        if (chips[i] && v) chips[i].innerHTML = '<span>' + v.slice(0,2) + '</span>' + v.slice(2);
+      });
+    }
+
+    // --- About Photos ---
+    const photos = dataObj.about_photos;
+    if (photos) {
+      const wrap = document.getElementById('aboutImgWrap');
+      if (wrap && photos.club) {
+        wrap.style.background = 'none';
+        wrap.style.border = 'none';
+        wrap.style.padding = '0';
+        wrap.innerHTML = `<img src="${photos.club}" alt="Club Photo" style="width:100%;height:100%;object-fit:cover;border-radius:16px;aspect-ratio:4/3;display:block;" loading="lazy" />`;
+      }
+      const cardWrap = document.getElementById('aboutCardWrap');
+      if (cardWrap && photos.campus) {
+        cardWrap.innerHTML = `
+          <img src="${photos.campus}" alt="Campus" style="width:64px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;" />
+          <div>
+            <div class="label">Campus</div>
+            <div class="value">NIELIT Campus</div>
+          </div>`;
+      }
+    }
+
+    // --- Activities ---
+    const activities = dataObj.activities;
+    if (activities && activities.length) {
+      const grid = document.querySelector('.activities-grid');
+      if (grid) {
+        const staggerCls = ['stagger-1','stagger-2','stagger-3','stagger-4','stagger-5','stagger-6'];
+        grid.innerHTML = '';
+        activities.forEach((act, i) => {
+          const card = document.createElement('div');
+          card.className = 'activity-card fade-up ' + (staggerCls[i%6]);
+          card.innerHTML = `<div class="activity-icon" style="background:${act.bg||'#e8f5e9'}">${act.icon}</div><h3>${act.title}</h3><p>${act.desc}</p>`;
+          grid.appendChild(card);
+          if (typeof observer !== 'undefined') observer.observe(card);
+        });
+      }
+    }
+
+    // --- Events & Calendar ---
+    if (dataObj.events && Array.isArray(dataObj.events) && dataObj.events.length > 0) {
+      activeEvents = dataObj.events;
+      if (typeof syncEventsAndCalendar === 'function') syncEventsAndCalendar();
+    }
+
+    // --- Team ---
+    const team = dataObj.team;
+    if (team && team.length) {
+      const teamGrid = document.querySelector('.team-grid');
+      if (teamGrid) {
+        const staggerCls = ['stagger-1','stagger-2','stagger-3','stagger-4','stagger-5','stagger-6'];
+        teamGrid.innerHTML = '';
+        team.forEach((m, i) => {
+          const card = document.createElement('div');
+          card.className = 'team-card fade-up ' + (staggerCls[i%6]) + (m.isAdvisor ? ' team-advisor' : '');
+          card.innerHTML = `<div class="team-avatar">${m.avatar}</div><div class="team-name">${m.name}</div><div class="team-role">${m.role}</div><div class="team-dept">${m.dept}</div>`;
+          teamGrid.appendChild(card);
+          if (typeof observer !== 'undefined') observer.observe(card);
+        });
+      }
+    }
+
+    // --- Contact ---
+    const contact = dataObj.contact;
+    if (contact) {
+      const cTexts = document.querySelectorAll('.contact-item .c-text');
+      if (cTexts[0] && contact.email) cTexts[0].textContent = contact.email;
+      if (cTexts[1] && contact.location) cTexts[1].textContent = contact.location;
+      if (cTexts[2] && contact.hours) cTexts[2].textContent = contact.hours;
+      const socBtns = document.querySelectorAll('.social-btn');
+      [contact.instagram, contact.whatsapp, contact.facebook, contact.twitter]
+        .forEach((url,i) => { if (socBtns[i] && url && url !== '#') socBtns[i].href = url; });
+      const footerA = document.querySelector('footer a[href^="mailto"]');
+      if (footerA && contact.email) { footerA.href = 'mailto:'+contact.email; footerA.textContent = contact.email; }
+      const mapDiv = document.querySelector('.contact-map');
+      if (mapDiv) {
+        const rawMap = (contact.mapEmbed && contact.mapEmbed.trim())
+          ? contact.mapEmbed.trim()
+          : (contact.location || contact.address || 'NIELIT Campus India');
+        const fallback = contact.address || contact.location || 'NIELIT Campus India';
+        const mapHtml = parseMapEmbedHtml(rawMap, fallback);
+        if (mapHtml) {
+          mapDiv.classList.add('has-map');
+          mapDiv.innerHTML = mapHtml;
+        }
+      }
+    }
+
+    // --- Gallery ---
+    const galleryData = dataObj.gallery;
+    if (galleryData && galleryData.length > 0) {
+      const galGrid = document.querySelector('.gallery-grid');
+      if (galGrid) {
+        galGrid.innerHTML = '';
+        galleryData.forEach((item, i) => {
+          const staggerCls = ['stagger-1','stagger-2','stagger-3','stagger-4','stagger-5','stagger-6'];
+          const div = document.createElement('div');
+          let spanClass = '';
+          if (item.span === 'wide') spanClass = ' wide';
+          else if (item.span === 'tall') spanClass = ' tall';
+          div.className = 'gallery-item fade-up ' + (staggerCls[i%6]) + spanClass;
+          div.innerHTML = `
+            <img src="${item.src}" alt="${item.label||''}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" />
+            <div class="gallery-overlay"><span>📸 ${item.label || 'View Photo'}</span></div>
+          `;
+          galGrid.appendChild(div);
+          if (typeof observer !== 'undefined') observer.observe(div);
+        });
+        const galNote = document.querySelector('.gallery-note');
+        if (galNote) galNote.innerHTML = '📷 <strong>Want to see your photos here?</strong> Share your volunteer moments using <strong>#GreenGuardiansNIELIT</strong> on Instagram!';
+      }
+    }
+  }
+
+  function applyAdminData() {
+    // 1. Initial quick render from localStorage cache
+    function load(key) { try { const d = localStorage.getItem('gg_' + key); return d ? JSON.parse(d) : null; } catch(e) { return null; } }
+    const localData = {
+      hero: load('hero'),
+      about: load('about'),
+      activities: load('activities'),
+      events: load('events'),
+      team: load('team'),
+      contact: load('contact'),
+      gallery: load('gallery'),
+      about_photos: load('about_photos')
+    };
+    renderAllSectionsFromData(localData);
+
+    // 2. Fetch fresh content live from database via backend API
+    fetch(`${API_BASE}/api/content`)
+      .then(res => res.ok ? res.json() : null)
+      .then(dbContent => {
+        if (!dbContent) return;
+        // Update local cache
+        for (const [k, v] of Object.entries(dbContent)) {
+          try { localStorage.setItem('gg_' + k, JSON.stringify(v)); } catch(e) {}
+        }
+        renderAllSectionsFromData(dbContent);
+        updateDbIndicator(true);
+      })
+      .catch(err => {
+        console.warn('Backend unreachable, using cached data:', err);
+        updateDbIndicator(false);
+      });
+  }
+
+  
+  // ============================================================
+  //  REAL-TIME AUTOMATIC SYNCHRONIZATION (EVERYWHERE)
+  // ============================================================
+  let realTimeEventSource = null;
+  let syncBroadcastChannel = null;
+
+  function initRealTimeSync() {
+    // 1. Same-Browser Instant Cross-Tab BroadcastChannel
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        syncBroadcastChannel = new BroadcastChannel('campus_sync_channel');
+        syncBroadcastChannel.onmessage = (evt) => {
+          if (evt.data && evt.data.type === 'content_updated') {
+            applyLiveContentPatch(evt.data.key, evt.data.data);
+          }
+        };
+      }
+    } catch(e) {}
+
+    // Storage event listener fallback for other tabs
+    window.addEventListener('storage', (e) => {
+      if (e.key && e.key.startsWith('gg_')) {
+        const key = e.key.replace('gg_', '');
+        try {
+          const val = JSON.parse(e.newValue);
+          applyLiveContentPatch(key, val);
+        } catch(err) {}
+      }
+    });
+
+    // 2. Server-Sent Events (SSE) for Real-Time Cross-Device / Remote Sync
+    function startSSE() {
+      if (typeof EventSource === 'undefined') return;
+      try {
+        if (realTimeEventSource) realTimeEventSource.close();
+        realTimeEventSource = new EventSource(`${API_BASE}/api/events`);
+
+        realTimeEventSource.onopen = () => {
+          updateDbIndicator(true, 'Live Auto-Sync Active');
+        };
+
+        realTimeEventSource.onmessage = (evt) => {
+          if (!evt.data) return;
+          try {
+            const msg = JSON.parse(evt.data);
+            if (msg.type === 'content_updated') {
+              applyLiveContentPatch(msg.key, msg.data);
+            } else if (msg.type === 'bulk_content_updated') {
+              for (const [k, v] of Object.entries(msg.data || {})) {
+                applyLiveContentPatch(k, v);
+              }
+            }
+          } catch(err) {}
+        };
+
+        realTimeEventSource.onerror = () => {
+          if (realTimeEventSource) realTimeEventSource.close();
+          // Auto-reconnect after 3 seconds
+          setTimeout(startSSE, 3000);
+        };
+      } catch(err) {
+        console.warn('Real-time SSE setup error:', err);
+      }
+    }
+    startSSE();
+
+    // 3. Fallback Heartbeat Poller (guarantees sync even through proxy disconnects)
+    let lastObservedContentUpdate = '';
+    setInterval(async () => {
+      try {
+        const vRes = await fetch(`${API_BASE}/api/content/version`);
+        if (!vRes.ok) return;
+        const ver = await vRes.json();
+        if (lastObservedContentUpdate && ver.last_content_update && ver.last_content_update !== lastObservedContentUpdate) {
+          // Content updated on server, fetch fresh content
+          const cRes = await fetch(`${API_BASE}/api/content`);
+          if (cRes.ok) {
+            const fresh = await cRes.json();
+            for (const [k, v] of Object.entries(fresh)) {
+              try { localStorage.setItem('gg_' + k, JSON.stringify(v)); } catch(e) {}
+            }
+            renderAllSectionsFromData(fresh);
+          }
+        }
+        lastObservedContentUpdate = ver.last_content_update || lastObservedContentUpdate;
+      } catch(e) {}
+    }, 4000);
+  }
+
+  function applyLiveContentPatch(key, val) {
+    if (!key || !val) return;
+    try { localStorage.setItem('gg_' + key, JSON.stringify(val)); } catch(e) {}
+    const patch = {};
+    patch[key] = val;
+    renderAllSectionsFromData(patch);
+    flashLiveUpdateNotice(key);
+  }
+
+  function flashLiveUpdateNotice(key) {
+    let notice = document.getElementById('liveUpdateNotice');
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.id = 'liveUpdateNotice';
+      notice.style.cssText = 'position:fixed;top:80px;right:20px;z-index:99999;background:rgba(20,40,20,0.95);border:1px solid #4caf50;color:#e8f5e9;padding:10px 18px;border-radius:12px;font-size:0.8rem;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.35);backdrop-filter:blur(8px);display:flex;align-items:center;gap:8px;transform:translateY(-20px);opacity:0;transition:all 0.3s ease;pointer-events:none;';
+      document.body.appendChild(notice);
+    }
+    const label = {
+      hero: '🎯 Hero & Stats',
+      about: '🌿 About Section',
+      activities: '♻️ Activities',
+      events: '📅 Events & Calendar',
+      team: '👥 Team',
+      contact: '📬 Contact & Live Map',
+      gallery: '📸 Photo Gallery'
+    }[key] || key;
+
+    notice.innerHTML = `<span style="font-size:1.1rem">⚡</span> <span>Updated live: <strong>${label}</strong></span>`;
+    notice.style.transform = 'translateY(0)';
+    notice.style.opacity = '1';
+
+    clearTimeout(notice._hideTimer);
+    notice._hideTimer = setTimeout(() => {
+      notice.style.transform = 'translateY(-20px)';
+      notice.style.opacity = '0';
+    }, 2800);
+  }
+
+  applyAdminData();
+  initRealTimeSync();
+  fetch(`${API_BASE}/api/health`)
+    .then(r => r.ok ? updateDbIndicator(true) : updateDbIndicator(false))
+    .catch(() => updateDbIndicator(false));
+
+
+  // ─── parseMapEmbedHtml ────────────────────────────────────────────────
+  // Converts any Google Maps URL, short-link, place name, or <iframe> tag
+  // into an embeddable Google Maps <iframe> for the live campus map.
+  function parseMapEmbedHtml(rawInput, fallbackAddress) {
+    const defaultAddr = (fallbackAddress && fallbackAddress.trim()) ? fallbackAddress.trim() : 'NIELIT Campus India';
+    if (!rawInput || !rawInput.trim()) {
+      return `<iframe src="https://maps.google.com/maps?q=${encodeURIComponent(defaultAddr)}&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;width:100%;height:100%;min-height:350px;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+    }
+    let str = rawInput.trim();
+
+    if (str.toLowerCase().includes('<iframe')) {
+      const srcMatch = str.match(/src=["']([^"']+)["']/i);
+      if (srcMatch && srcMatch[1]) {
+        str = srcMatch[1];
+      } else {
+        return str.replace(/width=["'][^"']*["']/gi, 'width="100%"')
+                  .replace(/height=["'][^"']*["']/gi, 'height="100%"')
+                  .replace(/style=["'][^"']*["']/gi, 'style="border:0;width:100%;height:100%;min-height:350px;display:block;"');
+      }
+    }
+
+    str = str.replace(/^["']|["']$/g, '').trim();
+
+    if (str.includes('google.com/maps/embed') || str.includes('output=embed')) {
+      return `<iframe src="${str}" width="100%" height="100%" style="border:0;width:100%;height:100%;min-height:350px;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+    }
+
+    if (str.includes('google.com/maps/place/')) {
+      const placeMatch = str.match(/google\.com\/maps\/place\/([^/@?]+)/i);
+      if (placeMatch && placeMatch[1]) {
+        const placeName = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+        const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(placeName)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        return `<iframe src="${embedUrl}" width="100%" height="100%" style="border:0;width:100%;height:100%;min-height:350px;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+      }
+    }
+
+    if (str.includes('google.com/maps') && str.includes('q=')) {
+      const qMatch = str.match(/[?&]q=([^&]+)/i);
+      if (qMatch && qMatch[1]) {
+        const query = decodeURIComponent(qMatch[1].replace(/\+/g, ' '));
+        const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+        return `<iframe src="${embedUrl}" width="100%" height="100%" style="border:0;width:100%;height:100%;min-height:350px;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+      }
+    }
+
+    if (str.includes('maps.app.goo.gl') || str.includes('goo.gl/maps')) {
+      const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(defaultAddr)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+      return `
+        <div style="position:relative;width:100%;height:100%;min-height:350px;">
+          <iframe src="${embedUrl}" width="100%" height="100%" style="border:0;width:100%;height:100%;min-height:350px;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <a href="${str}" target="_blank" rel="noopener noreferrer" style="position:absolute;bottom:12px;right:12px;background:rgba(27,94,32,0.92);color:#fff;padding:6px 14px;border-radius:20px;font-size:0.75rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:5;">
+            📍 Open in Google Maps ↗
+          </a>
+        </div>`;
+    }
+
+    if (!str.startsWith('http://') && !str.startsWith('https://')) {
+      const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(str)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+      return `<iframe src="${embedUrl}" width="100%" height="100%" style="border:0;width:100%;height:100%;min-height:350px;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+    }
+
+    return `<iframe src="${str}" width="100%" height="100%" style="border:0;width:100%;height:100%;min-height:350px;display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  }
+
+  // --- Active nav link highlight ---
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a:not(.nav-cta):not(.nav-admin-btn)');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      if (window.scrollY >= section.offsetTop - 100) {
+        current = section.getAttribute('id');
+      }
+    });
+    navLinks.forEach(link => {
+      link.style.color = '';
+      if (link.getAttribute('href') === '#' + current) {
+        link.style.color = 'var(--green-main)';
+      }
+    });
+  });
+
+  // ===================== DYNAMIC EVENTS & CALENDAR SYNC =====================
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTH_SHORT = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  const DEFAULT_EVENTS = [
+    { day: "05", month: "Oct", year: "2026", tag: "drive", tagLabel: "🗑️ Drive", title: "Campus-Wide Waste Segregation Drive", desc: "All hostel blocks and academic buildings participate in a synchronized wet/dry/e-waste segregation effort.", time: "9:00 AM – 12:00 PM", location: "All Campus Zones", highlightOnCalendar: true, highlightType: "drive" },
+    { day: "12", month: "Oct", year: "2026", tag: "workshop", tagLabel: "✂️ Workshop", title: "Upcycling & Craft Workshop", desc: "Transform plastic bottles, cardboard, and paper into art. Open to all departments — no prior experience needed!", time: "2:00 PM – 5:00 PM", location: "Art Block, Room 204", highlightOnCalendar: true, highlightType: "event" },
+    { day: "19", month: "Oct", year: "2026", tag: "campaign", tagLabel: "📢 Campaign", title: "Plastic-Free Pledge Drive", desc: "Distribute cloth bags and reusable bottles at the campus gate, collect pledges from 500+ students and faculty.", time: "7:30 AM – 10:00 AM", location: "Main Gate & Canteen", highlightOnCalendar: true, highlightType: "drive" },
+    { day: "26", month: "Oct", year: "2026", tag: "competition", tagLabel: "🏆 Competition", title: "Adopt a Zone — Monthly Finale", desc: "Announcement of the cleanest hostel block and department of the month. Winners receive the Golden Leaf Award! 🌿", time: "1:00 PM – 2:30 PM", location: "College Auditorium", highlightOnCalendar: true, highlightType: "event" }
+  ];
+
+  let currentCalYear = 2026;
+  let currentCalMonthIndex = 9; // October (0-indexed)
+  let activeEvents = DEFAULT_EVENTS;
+
+  function getStoredEvents() {
+    try {
+      const d = localStorage.getItem('gg_events');
+      if (d) {
+        const parsed = JSON.parse(d);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch(e) {}
+    return DEFAULT_EVENTS;
+  }
+
+  function syncEventsAndCalendar() {
+    activeEvents = getStoredEvents();
+
+    // Auto-detect calendar month from the first upcoming event if available
+    if (activeEvents.length > 0) {
+      const firstEv = activeEvents[0];
+      const mIdx = MONTH_SHORT.findIndex(m => m.toLowerCase() === String(firstEv.month).trim().slice(0,3).toLowerCase());
+      if (mIdx !== -1) currentCalMonthIndex = mIdx;
+      if (firstEv.year) {
+        const yNum = parseInt(firstEv.year, 10);
+        if (!isNaN(yNum) && yNum >= 2020) currentCalYear = yNum;
+      }
+    }
+
+    renderEventsList(activeEvents);
+    renderCalendar(currentCalYear, currentCalMonthIndex, activeEvents);
+  }
+
+  function renderEventsList(eventsList) {
+    const listEl = document.getElementById('eventsListContainer');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+    const staggerCls = ['stagger-1','stagger-2','stagger-3','stagger-4','stagger-5','stagger-6'];
+
+    eventsList.forEach((ev, i) => {
+      const isDrive = ev.tag === 'drive' || ev.highlightType === 'drive' ||
+                      (ev.title && ev.title.toLowerCase().includes('drive')) ||
+                      (ev.tagLabel && ev.tagLabel.toLowerCase().includes('drive'));
+      const card = document.createElement('div');
+      card.className = 'event-card fade-up ' + (staggerCls[i % 6]);
+      card.id = `event-card-${parseInt(ev.day, 10)}-${String(ev.month).trim().slice(0,3).toLowerCase()}`;
+      card.innerHTML = `
+        <div class="event-date-box ${isDrive ? 'box-drive' : ''}">
+          <div class="day">${String(ev.day).padStart(2, '0')}</div>
+          <div class="month">${ev.month}</div>
+          ${ev.year ? `<div class="year">${ev.year}</div>` : ''}
+        </div>
+        <div class="event-info">
+          <div style="display:flex;gap:0.5rem;align-items:center;margin-bottom:0.4rem;flex-wrap:wrap;">
+            <span class="event-tag tag-${ev.tag || (isDrive ? 'drive' : 'workshop')}">${ev.tagLabel || (isDrive ? '🗑️ Drive' : '📅 Event')}</span>
+            ${ev.highlightOnCalendar !== false ? '<span style="font-size:0.7rem;color:var(--green-main);font-weight:600;display:inline-flex;align-items:center;gap:3px;">🟢 On Calendar</span>' : ''}
+          </div>
+          <h3>${ev.title}</h3>
+          <p>${ev.desc}</p>
+          <div class="event-meta">
+            <span>🕘 ${ev.time || 'TBA'}</span>
+            <span>📍 ${ev.location || 'Campus'}</span>
+          </div>
+        </div>
+      `;
+      listEl.appendChild(card);
+      if (typeof observer !== 'undefined') observer.observe(card);
+    });
+  }
+
+  function renderCalendar(year, monthIndex, eventsList) {
+    const gridEl = document.getElementById('calGrid');
+    const monthTitleEl = document.getElementById('calMonthTitle');
+    if (!gridEl || !monthTitleEl) return;
+
+    monthTitleEl.textContent = `${MONTH_NAMES[monthIndex]} ${year}`;
+    gridEl.innerHTML = '';
+
+    // Weekday headers
+    const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    dayNames.forEach(d => {
+      const el = document.createElement('div');
+      el.className = 'cal-day-name';
+      el.textContent = d;
+      gridEl.appendChild(el);
+    });
+
+    const firstDayOfWeek = new Date(year, monthIndex, 1).getDay();
+    const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+    const curShortMonth = MONTH_SHORT[monthIndex].toLowerCase();
+
+    // Today indicator
+    const now = new Date();
+    const isCurrentYearMonth = now.getFullYear() === year && now.getMonth() === monthIndex;
+    const todayDate = now.getDate();
+
+    // Blank cells before the 1st
+    for (let i = 0; i < firstDayOfWeek; i++) {
+      const blank = document.createElement('div');
+      blank.className = 'cal-day empty';
+      gridEl.appendChild(blank);
+    }
+
+    // Days 1..N
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dayEl = document.createElement('div');
+      dayEl.className = 'cal-day';
+      dayEl.textContent = d;
+
+      if (isCurrentYearMonth && d === todayDate) {
+        dayEl.classList.add('today');
+      }
+
+      // Check for matching events on this date
+      const matchingEvents = (eventsList || []).filter(ev => {
+        if (ev.highlightOnCalendar === false) return false;
+        const evDay = parseInt(ev.day, 10);
+        if (evDay !== d) return false;
+
+        const evMonthStr = String(ev.month || '').trim().toLowerCase();
+        const matchesMonth = evMonthStr.startsWith(curShortMonth) ||
+                             evMonthStr === String(monthIndex + 1) ||
+                             evMonthStr === String(monthIndex + 1).padStart(2, '0');
+        if (!matchesMonth) return false;
+
+        if (ev.year) {
+          const evY = parseInt(ev.year, 10);
+          if (!isNaN(evY) && evY !== year) return false;
+        }
+        return true;
+      });
+
+      if (matchingEvents.length > 0) {
+        dayEl.classList.add('event-day');
+        const isDrive = matchingEvents.some(ev =>
+          ev.tag === 'drive' || ev.highlightType === 'drive' ||
+          (ev.title && ev.title.toLowerCase().includes('drive')) ||
+          (ev.tagLabel && ev.tagLabel.toLowerCase().includes('drive'))
+        );
+
+        if (isDrive) {
+          dayEl.classList.add('drive-day');
+        } else {
+          dayEl.classList.add('general-event-day');
+        }
+
+        const summaryTitles = matchingEvents.map(e => `${e.tagLabel || '📅'} ${e.title} (${e.time})`).join(' • ');
+        dayEl.title = summaryTitles;
+
+        dayEl.addEventListener('click', () => {
+          // Highlight selected date cell
+          document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected-day'));
+          dayEl.classList.add('selected-day');
+
+          // Show event preview below calendar
+          const detailEl = document.getElementById('calDayDetail');
+          if (detailEl) {
+            const itemsHtml = matchingEvents.map(ev => `
+              <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.15);">
+                <div class="cal-day-detail-title">${ev.tagLabel || '📅'} ${ev.title}</div>
+                <div class="cal-day-detail-meta">🕒 ${ev.time || 'TBA'} &nbsp;•&nbsp; 📍 ${ev.location || 'Campus'}</div>
+                <a href="javascript:void(0)" class="cal-day-detail-link" onclick="scrollToEventCard(${parseInt(ev.day, 10)}, '${curShortMonth}')">
+                  View in Events List ↓
+                </a>
+              </div>
+            `).join('');
+
+            detailEl.innerHTML = `
+              <div style="font-weight:700;color:#b9f6ca;font-size:0.75rem;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">
+                🗓️ ${MONTH_NAMES[monthIndex]} ${d}, ${year} • ${matchingEvents.length} Initiative${matchingEvents.length > 1 ? 's' : ''}
+              </div>
+              ${itemsHtml}
+            `;
+            detailEl.style.display = 'block';
+          }
+
+          // Smoothly scroll and pulse first matching event card
+          scrollToEventCard(d, curShortMonth);
+        });
+      }
+
+      gridEl.appendChild(dayEl);
+    }
+  }
+
+  function scrollToEventCard(dayNum, shortMonth) {
+    const cardId = `event-card-${parseInt(dayNum, 10)}-${String(shortMonth).toLowerCase()}`;
+    const card = document.getElementById(cardId);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.remove('card-pulse');
+      void card.offsetWidth; // Force re-flow for animation restart
+      card.classList.add('card-pulse');
+      setTimeout(() => card.classList.remove('card-pulse'), 2000);
+    }
+  }
+
+  // Month navigation button listeners
+  const calPrevBtn = document.getElementById('calPrevBtn');
+  const calNextBtn = document.getElementById('calNextBtn');
+  if (calPrevBtn) {
+    calPrevBtn.addEventListener('click', () => {
+      currentCalMonthIndex--;
+      if (currentCalMonthIndex < 0) {
+        currentCalMonthIndex = 11;
+        currentCalYear--;
+      }
+      renderCalendar(currentCalYear, currentCalMonthIndex, activeEvents);
+      const detailEl = document.getElementById('calDayDetail');
+      if (detailEl) detailEl.style.display = 'none';
+    });
+  }
+  if (calNextBtn) {
+    calNextBtn.addEventListener('click', () => {
+      currentCalMonthIndex++;
+      if (currentCalMonthIndex > 11) {
+        currentCalMonthIndex = 0;
+        currentCalYear++;
+      }
+      renderCalendar(currentCalYear, currentCalMonthIndex, activeEvents);
+      const detailEl = document.getElementById('calDayDetail');
+      if (detailEl) detailEl.style.display = 'none';
+    });
+  }
+
+  // Live storage sync across browser tabs
+  window.addEventListener('storage', (e) => {
+    if (e.key === 'gg_events') {
+      syncEventsAndCalendar();
+    }
+  });
+
+  // Initial load of events & dynamic calendar
+  syncEventsAndCalendar();
+
+  // ===================== ADMIN LOGIN MODAL LOGIC =====================
+  function openAdminModal() {
+    const modal = document.getElementById('adminLoginModal');
+    if (modal) {
+      modal.classList.add('show');
+      const pwInput = document.getElementById('adminModalPw');
+      if (pwInput) {
+        pwInput.value = '';
+        setTimeout(() => pwInput.focus(), 100);
+      }
+      const err = document.getElementById('adminModalErr');
+      if (err) { err.style.display = 'none'; err.textContent = ''; }
+      const btn = document.getElementById('adminLoginBtn');
+      if (btn) {
+        btn.textContent = '🔓 Unlock Admin Panel →';
+        btn.disabled = false;
+        btn.style.background = '';
+      }
+    }
+  }
+
+  function closeAdminModal() {
+    const modal = document.getElementById('adminLoginModal');
+    if (modal) modal.classList.remove('show');
+  }
+
+  function toggleAdminPwVisibility() {
+    const pw = document.getElementById('adminModalPw');
+    if (pw) pw.type = pw.type === 'password' ? 'text' : 'password';
+  }
+
+  async function handleAdminLogin(e) {
+    e.preventDefault();
+    const pwInput = document.getElementById('adminModalPw');
+    const entered = pwInput ? pwInput.value : '';
+    const storedPw = localStorage.getItem('gg_admin_pw') || 'green2026';
+    const err = document.getElementById('adminModalErr');
+    const btn = document.getElementById('adminLoginBtn');
+
+    let isValid = false;
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/verify`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: entered })
+      });
+      if (res.ok) {
+        const json = await res.json();
+        isValid = json.valid;
+      }
+    } catch(errAuth) {
+      isValid = (entered === storedPw || entered === 'green2026');
+    }
+
+    if (isValid || entered === storedPw || entered === 'green2026') {
+      sessionStorage.setItem('gg_admin_logged', '1');
+      if (err) err.style.display = 'none';
+      if (btn) {
+        btn.textContent = '✅ Access Granted! Redirecting...';
+        btn.style.background = '#1b5e20';
+        btn.disabled = true;
+      }
+      setTimeout(() => {
+        window.location.href = 'admin.html';
+      }, 400);
+    } else {
+      if (err) {
+        err.style.display = 'block';
+        err.textContent = '❌ Incorrect password. Default is green2026.';
+      }
+      if (pwInput) {
+        pwInput.value = '';
+        pwInput.focus();
+      }
+    }
+  }
+
+  // Keyboard shortcut: Escape closes modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeAdminModal();
+  });
+</script>
+
+<!-- ===================== ADMIN LOGIN MODAL ===================== -->
+<div id="adminLoginModal" class="admin-modal" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle" onclick="if(event.target===this)closeAdminModal()">
+  <div class="admin-modal-box">
+    <button type="button" class="admin-modal-close" onclick="closeAdminModal()" aria-label="Close modal">✕</button>
+    <div class="admin-modal-logo">🌿</div>
+    <h3 class="admin-modal-title" id="adminModalTitle">Admin Portal Login</h3>
+    <p class="admin-modal-sub">
+      Sign in with your admin credentials to manage and update events, clean-up drives, calendar highlights, and website content.
+    </p>
+    <form id="adminLoginForm" onsubmit="handleAdminLogin(event)">
+      <div class="admin-pw-wrap">
+        <input type="password" id="adminModalPw" placeholder="Enter admin password (e.g. green2026)" autocomplete="current-password" required />
+        <button type="button" class="admin-pw-toggle" onclick="toggleAdminPwVisibility()" title="Show/Hide password">👁️</button>
+      </div>
+      <button type="submit" class="admin-modal-btn" id="adminLoginBtn">
+        🔓 Unlock Admin Panel →
+      </button>
+      <div class="admin-modal-err" id="adminModalErr"></div>
+    </form>
+    <div class="admin-modal-hint">
+      Default password: <code style="background:var(--green-bg);padding:2px 6px;border-radius:4px;font-weight:700;color:var(--green-dark);">green2026</code>
+    </div>
+    <a href="admin.html" class="admin-direct-link">
+      Or open Admin Panel directly (admin.html) →
+    </a>
+  </div>
+</div>
+
+</body>
+</html>
+

@@ -1,0 +1,3831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — Green Guardians</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Poppins', sans-serif; background: #0f1f0f; color: #e8f5e9; min-height: 100vh; }
+
+    /* ===== LOGIN OVERLAY ===== */
+    #loginOverlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(135deg, #0a1f0a, #1b5e20);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .login-box {
+      background: #1a2e1a; border: 1px solid #2e7d32;
+      border-radius: 20px; padding: 3rem; text-align: center;
+      width: 380px; box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .login-logo { font-size: 3.5rem; margin-bottom: 0.5rem; }
+    .login-title { font-size: 1.5rem; font-weight: 800; color: #a5d6a7; margin-bottom: 0.3rem; }
+    .login-sub { font-size: 0.82rem; color: rgba(255,255,255,0.45); margin-bottom: 2rem; }
+    .login-box input {
+      width: 100%; padding: 14px 18px; border-radius: 12px;
+      border: 1.5px solid #2e7d32; background: #0f1f0f;
+      color: #e8f5e9; font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem; outline: none; margin-bottom: 1rem;
+      letter-spacing: 0.1em;
+    }
+    .login-box input:focus { border-color: #66bb6a; }
+    .login-btn {
+      width: 100%; padding: 14px; background: #2e7d32; color: #fff;
+      border: none; border-radius: 12px; font-size: 1rem;
+      font-weight: 700; font-family: 'Poppins', sans-serif;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .login-btn:hover { background: #388e3c; }
+    .login-error {
+      color: #ef9a9a; font-size: 0.82rem; margin-top: 0.8rem;
+      display: none;
+    }
+
+    /* ===== SIDEBAR ===== */
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 250px; background: #0a1a0a;
+      border-right: 1px solid #1b4020;
+      padding: 0; position: fixed; top: 0; left: 0; bottom: 0;
+      display: flex; flex-direction: column; z-index: 100;
+    }
+    .sidebar-brand {
+      padding: 1.5rem 1.2rem; border-bottom: 1px solid #1b4020;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-brand .logo { font-size: 1.5rem; }
+    .sidebar-brand .brand-name { font-size: 0.88rem; font-weight: 700; color: #a5d6a7; }
+    .sidebar-brand .brand-sub { font-size: 0.68rem; color: rgba(255,255,255,0.35); }
+    .nav-section { padding: 1rem 0.8rem 0.3rem; font-size: 0.65rem; font-weight: 700;
+      color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 1.5px; }
+    .sidebar-nav { flex: 1; overflow-y: auto; }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0.7rem 1.2rem; font-size: 0.85rem; color: rgba(255,255,255,0.6);
+      cursor: pointer; transition: all 0.2s; border-radius: 8px; margin: 2px 8px;
+      border: none; background: none; width: calc(100% - 16px); text-align: left;
+    }
+    .nav-item:hover { background: rgba(46,125,50,0.3); color: #a5d6a7; }
+    .nav-item.active { background: #2e7d32; color: #fff; font-weight: 600; }
+    .nav-item .n-icon { font-size: 1.1rem; width: 22px; }
+    .sidebar-footer {
+      padding: 1rem 1.2rem; border-top: 1px solid #1b4020;
+    }
+    .logout-btn {
+      width: 100%; padding: 10px; background: rgba(239,83,80,0.15);
+      color: #ef9a9a; border: 1px solid rgba(239,83,80,0.3);
+      border-radius: 8px; font-family: 'Poppins', sans-serif;
+      font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+    }
+    .logout-btn:hover { background: rgba(239,83,80,0.3); }
+
+    /* ===== MAIN CONTENT ===== */
+    .main { margin-left: 250px; flex: 1; padding: 2.5rem; }
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 2.5rem; padding-bottom: 1.5rem;
+      border-bottom: 1px solid #1b4020;
+    }
+    .page-header h1 { font-size: 1.6rem; font-weight: 800; color: #a5d6a7; }
+    .page-header p { font-size: 0.82rem; color: rgba(255,255,255,0.4); margin-top: 2px; }
+    .view-site-btn {
+      padding: 8px 18px; background: transparent; color: #66bb6a;
+      border: 1px solid #2e7d32; border-radius: 20px;
+      font-family: 'Poppins', sans-serif; font-size: 0.82rem;
+      cursor: pointer; transition: all 0.2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .view-site-btn:hover { background: #2e7d32; color: #fff; }
+
+    /* ===== TAB PANELS ===== */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== CARDS ===== */
+    .admin-card {
+      background: #1a2e1a; border: 1px solid #2a3e2a;
+      border-radius: 16px; padding: 1.8rem; margin-bottom: 1.5rem;
+    }
+    .admin-card h3 {
+      font-size: 1rem; font-weight: 700; color: #a5d6a7;
+      margin-bottom: 1.5rem; display: flex; align-items: center; gap: 8px;
+    }
+
+    /* ===== FORM FIELDS ===== */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    .form-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .fg { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+    .fg label { font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.5px; }
+    .fg input, .fg textarea, .fg select {
+      padding: 11px 14px; border: 1.5px solid #2a3e2a;
+      border-radius: 10px; background: #0f1f0f; color: #e8f5e9;
+      font-family: 'Poppins', sans-serif; font-size: 0.88rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color: #2e7d32; }
+    .fg textarea { resize: vertical; min-height: 80px; }
+    .fg select option { background: #0f1f0f; }
+
+    /* ===== SAVE BUTTON ===== */
+    .save-btn {
+      padding: 12px 28px; background: #2e7d32; color: #fff;
+      border: none; border-radius: 10px; font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .save-btn:hover { background: #388e3c; transform: translateY(-1px); }
+    .save-btn.saved { background: #1b5e20; }
+
+    /* ===== STATS ROW ===== */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: #1a2e1a; border: 1px solid #2a3e2a;
+      border-radius: 12px; padding: 1.2rem; text-align: center;
+    }
+    .stat-card .s-num { font-size: 1.8rem; font-weight: 800; color: #66bb6a; }
+    .stat-card .s-label { font-size: 0.72rem; color: rgba(255,255,255,0.4); margin-top: 4px; }
+
+    /* ===== LIST ITEMS (Events, Team) ===== */
+    .item-list { display: flex; flex-direction: column; gap: 1rem; }
+    .item-entry {
+      background: #0f1f0f; border: 1px solid #2a3e2a;
+      border-radius: 12px; padding: 1.2rem;
+      position: relative;
+    }
+    .item-entry-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    .item-entry-title { font-size: 0.9rem; font-weight: 700; color: #a5d6a7; }
+    .delete-btn {
+      padding: 5px 12px; background: rgba(239,83,80,0.15);
+      color: #ef9a9a; border: 1px solid rgba(239,83,80,0.3);
+      border-radius: 8px; font-size: 0.75rem; cursor: pointer;
+      font-family: 'Poppins', sans-serif; transition: all 0.2s;
+    }
+    .delete-btn:hover { background: rgba(239,83,80,0.35); }
+
+    .add-btn {
+      padding: 10px 20px; background: transparent; color: #66bb6a;
+      border: 1.5px dashed #2e7d32; border-radius: 10px;
+      font-family: 'Poppins', sans-serif; font-size: 0.85rem;
+      cursor: pointer; transition: all 0.2s; width: 100%;
+      margin-top: 0.8rem;
+    }
+    .add-btn:hover { background: rgba(46,125,50,0.2); }
+
+    /* ===== TOAST ===== */
+    #toast {
+      position: fixed; bottom: 2rem; right: 2rem;
+      background: #2e7d32; color: #fff; padding: 14px 24px;
+      border-radius: 12px; font-size: 0.88rem; font-weight: 600;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      transform: translateY(80px); opacity: 0;
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 9000;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ===== DASHBOARD ===== */
+    .dashboard-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    .dash-card {
+      background: #1a2e1a; border: 1px solid #2a3e2a;
+      border-radius: 16px; padding: 1.5rem; cursor: pointer;
+      transition: all 0.2s; text-align: center;
+    }
+    .dash-card:hover { transform: translateY(-4px); border-color: #388e3c; background: #1f3520; }
+    .dash-card .dc-icon { font-size: 2.5rem; margin-bottom: 0.8rem; }
+    .dash-card h4 { font-size: 0.95rem; font-weight: 700; color: #a5d6a7; margin-bottom: 0.3rem; }
+    .dash-card p { font-size: 0.78rem; color: rgba(255,255,255,0.4); }
+
+    /* Activity card rows */
+    .act-emoji-pick { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+    .act-emoji-pick button {
+      width: 38px; height: 38px; border-radius: 8px; border: 1.5px solid #2a3e2a;
+      background: #0f1f0f; font-size: 1.2rem; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .act-emoji-pick button:hover, .act-emoji-pick button.sel { border-color: #66bb6a; background: rgba(102,187,106,0.15); }
+
+    /* event tag colors */
+    .tag-sel { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.3rem; }
+    .tag-chip {
+      padding: 4px 12px; border-radius: 20px; font-size: 0.75rem;
+      font-weight: 600; cursor: pointer; border: 1.5px solid transparent;
+      transition: all 0.15s;
+    }
+    .tag-chip.active { border-color: #66bb6a; box-shadow: 0 0 8px rgba(102,187,106,0.4); }
+    .tc-drive { background: #e8f5e9; color: #1b5e20; }
+    .tc-plantation { background: #e8f5e9; color: #2e7d32; }
+    .tc-ewaste { background: #e1f5fe; color: #0277bd; }
+    .tc-plasticfree { background: #fce4ec; color: #c2185b; }
+    .tc-workshop { background: #fff8e1; color: #f57f17; }
+    .tc-campaign { background: #e3f2fd; color: #01579b; }
+    .tc-competition { background: #f3e5f5; color: #6a1b9a; }
+    .tc-volunteer { background: #ede7f6; color: #512da8; }
+
+    /* Admin Calendar Preview */
+    .admin-cal-container {
+      background: #0f1f0f; border: 1.5px solid #2a3e2a;
+      border-radius: 12px; padding: 1.2rem; margin-top: 0.8rem;
+    }
+    .admin-cal-grid {
+      display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+      font-size: 0.8rem; text-align: center;
+    }
+    .admin-cal-day-name {
+      color: rgba(255,255,255,0.4); font-weight: 600; padding: 6px 0;
+      text-transform: uppercase; font-size: 0.68rem;
+    }
+    .admin-cal-day {
+      padding: 8px 0; border-radius: 8px; background: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.7); cursor: default; transition: all 0.18s;
+      position: relative; font-weight: 500;
+    }
+    .admin-cal-day.empty { background: transparent; }
+    .admin-cal-day.today { border: 1.5px solid rgba(255,255,255,0.5); }
+    .admin-cal-day.acl-drive {
+      background: #1b5e20 !important; color: #b9f6ca !important;
+      font-weight: 700 !important; border: 1.5px solid #66bb6a !important;
+      cursor: pointer; box-shadow: 0 0 10px rgba(102,187,106,0.3);
+    }
+    .admin-cal-day.acl-event {
+      background: #4e342e !important; color: #ffe082 !important;
+      font-weight: 700 !important; border: 1.5px solid #ffb74d !important;
+      cursor: pointer; box-shadow: 0 0 10px rgba(255,183,77,0.3);
+    }
+    .admin-cal-day:hover { transform: scale(1.08); z-index: 2; }
+    .admin-cal-legend {
+      display: flex; gap: 1.5rem; justify-content: center;
+      margin-top: 1rem; font-size: 0.75rem; color: rgba(255,255,255,0.7);
+      flex-wrap: wrap;
+    }
+    .admin-cal-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .acl-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+    .acl-dot.acl-drive { background: #66bb6a; box-shadow: 0 0 6px #66bb6a; }
+    .acl-dot.acl-event { background: #ffb74d; box-shadow: 0 0 6px #ffb74d; }
+    .acl-dot.acl-today { border: 1.5px solid #ffffff; }
+
+    /* Filter Chips & Type Badges */
+    .filter-btn-group { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .filter-chip {
+      padding: 6px 14px; border-radius: 20px; font-size: 0.78rem;
+      font-weight: 600; cursor: pointer; border: 1.5px solid #2a3e2a;
+      background: #0f1f0f; color: rgba(255,255,255,0.7); transition: all 0.2s;
+    }
+    .filter-chip:hover { border-color: #66bb6a; color: #fff; }
+    .filter-chip.active { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+
+    .event-type-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 600;
+    }
+    .et-drive { background: rgba(102,187,106,0.18); color: #81c784; border: 1px solid rgba(102,187,106,0.4); }
+    .et-event { background: rgba(255,183,77,0.18); color: #ffb74d; border: 1px solid rgba(255,183,77,0.4); }
+
+    .highlight-box {
+      background: rgba(46,125,50,0.12); border: 1px solid rgba(46,125,50,0.3);
+      border-radius: 10px; padding: 12px 14px; margin-bottom: 1rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    }
+
+    /* ===== APPLICATIONS DATABASE ===== */
+    .app-summary-row {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .app-stat {
+      background: #1a2e1a; border: 1px solid #2a3e2a;
+      border-radius: 12px; padding: 1rem 1.2rem; text-align: center;
+    }
+    .app-stat .as-num { font-size: 1.6rem; font-weight: 800; }
+    .app-stat .as-label { font-size: 0.68rem; color: rgba(255,255,255,0.4); margin-top: 3px; }
+    .col-total .as-num { color: #66bb6a; }
+    .col-pending .as-num { color: #ffd54f; }
+    .col-reviewed .as-num { color: #81d4fa; }
+    .col-accepted .as-num { color: #a5d6a7; }
+    .col-rejected .as-num { color: #ef9a9a; }
+
+    /* Search & filter bar */
+    .db-toolbar {
+      display: flex; gap: 0.8rem; flex-wrap: wrap;
+      align-items: center; margin-bottom: 1.2rem;
+    }
+    .db-search {
+      flex: 1; min-width: 200px;
+      padding: 10px 14px; border: 1.5px solid #2a3e2a;
+      border-radius: 10px; background: #0f1f0f; color: #e8f5e9;
+      font-family: 'Poppins', sans-serif; font-size: 0.88rem; outline: none;
+    }
+    .db-search:focus { border-color: #2e7d32; }
+    .db-filter {
+      padding: 10px 14px; border: 1.5px solid #2a3e2a;
+      border-radius: 10px; background: #0f1f0f; color: #e8f5e9;
+      font-family: 'Poppins', sans-serif; font-size: 0.82rem;
+      outline: none; cursor: pointer;
+    }
+    .db-filter:focus { border-color: #2e7d32; }
+    .db-filter option { background: #0f1f0f; }
+    .db-action-btn {
+      padding: 10px 16px; border-radius: 10px;
+      font-family: 'Poppins', sans-serif; font-size: 0.82rem;
+      cursor: pointer; border: 1px solid #2a3e2a;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .db-export { background: #1a3020; color: #a5d6a7; }
+    .db-export:hover { background: #2e7d32; color: #fff; border-color: #2e7d32; }
+    .db-clear-all { background: rgba(239,83,80,0.1); color: #ef9a9a; }
+    .db-clear-all:hover { background: rgba(239,83,80,0.3); }
+
+    /* Table */
+    .app-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #2a3e2a; }
+    table.app-table {
+      width: 100%; border-collapse: collapse; font-size: 0.82rem;
+      min-width: 700px;
+    }
+    .app-table thead { background: #142514; }
+    .app-table th {
+      padding: 12px 14px; text-align: left; color: rgba(255,255,255,0.45);
+      font-weight: 600; font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.5px; white-space: nowrap;
+    }
+    .app-table th.sortable { cursor: pointer; }
+    .app-table th.sortable:hover { color: #a5d6a7; }
+    .app-table td {
+      padding: 12px 14px; border-top: 1px solid #1a2e1a;
+      vertical-align: middle; color: rgba(255,255,255,0.8);
+    }
+    .app-table tr:hover td { background: rgba(46,125,50,0.07); }
+    .app-table .app-id { font-size: 0.68rem; color: rgba(255,255,255,0.3); font-family: monospace; }
+    .app-table .app-name { font-weight: 700; color: #e8f5e9; }
+    .app-table .app-date { font-size: 0.72rem; color: rgba(255,255,255,0.4); }
+
+    /* Status badges */
+    .status-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+    }
+    .s-pending    { background: rgba(255,213,79,0.15);  color: #ffd54f; border: 1px solid rgba(255,213,79,0.3); }
+    .s-reviewed   { background: rgba(129,212,250,0.15); color: #81d4fa; border: 1px solid rgba(129,212,250,0.3); }
+    .s-accepted   { background: rgba(102,187,106,0.15); color: #a5d6a7; border: 1px solid rgba(102,187,106,0.3); }
+    .s-rejected   { background: rgba(239,83,80,0.15);   color: #ef9a9a; border: 1px solid rgba(239,83,80,0.3); }
+
+    /* Row action buttons */
+    .row-btns { display: flex; gap: 6px; align-items: center; }
+    .row-btn {
+      padding: 4px 10px; border-radius: 6px; font-size: 0.7rem;
+      cursor: pointer; border: 1px solid #2a3e2a; background: #1a2e1a;
+      color: rgba(255,255,255,0.6); font-family: 'Poppins',sans-serif;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .row-btn:hover { border-color: #388e3c; color: #a5d6a7; }
+    .row-btn.view { color: #81d4fa; border-color: rgba(129,212,250,0.3); }
+    .row-btn.view:hover { background: rgba(129,212,250,0.1); }
+    .row-btn.del  { color: #ef9a9a; border-color: rgba(239,83,80,0.3); }
+    .row-btn.del:hover { background: rgba(239,83,80,0.2); }
+
+    /* Empty state */
+    .db-empty {
+      text-align: center; padding: 4rem 2rem;
+      color: rgba(255,255,255,0.25); font-size: 0.9rem;
+    }
+    .db-empty span { font-size: 3.5rem; display: block; margin-bottom: 0.8rem; }
+
+    /* ── DETAIL MODAL ── */
+    #appModal {
+      position: fixed; inset: 0; z-index: 9997;
+      background: rgba(0,0,0,0.8); display: none;
+      align-items: flex-start; justify-content: center;
+      padding: 3rem 1rem; overflow-y: auto;
+    }
+    #appModal.open { display: flex; }
+    .modal-box {
+      background: #1a2e1a; border: 1px solid #2e7d32;
+      border-radius: 20px; width: 100%; max-width: 640px;
+      padding: 2rem; position: relative; box-shadow: 0 24px 60px rgba(0,0,0,0.6);
+    }
+    .modal-close {
+      position: absolute; top: 1.2rem; right: 1.5rem;
+      background: none; border: none; color: rgba(255,255,255,0.5);
+      font-size: 1.5rem; cursor: pointer; transition: color 0.2s;
+    }
+    .modal-close:hover { color: #ef9a9a; }
+    .modal-id { font-size: 0.68rem; color: rgba(255,255,255,0.3); font-family: monospace; margin-bottom: 0.3rem; }
+    .modal-name { font-size: 1.4rem; font-weight: 800; color: #a5d6a7; margin-bottom: 0.2rem; }
+    .modal-date { font-size: 0.78rem; color: rgba(255,255,255,0.35); margin-bottom: 1.5rem; }
+    .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem; }
+    .modal-field label { font-size: 0.65rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 3px; }
+    .modal-field .mf-val { font-size: 0.88rem; color: #e8f5e9; font-weight: 600; }
+    .modal-motivation {
+      background: #0f1f0f; border: 1px solid #2a3e2a;
+      border-radius: 10px; padding: 1rem; font-size: 0.85rem;
+      color: rgba(255,255,255,0.75); line-height: 1.7; margin-bottom: 1.2rem;
+      font-style: italic;
+    }
+    .modal-notes-label { font-size: 0.72rem; color: rgba(255,255,255,0.4); margin-bottom: 6px; display: block; }
+    .modal-notes {
+      width: 100%; background: #0f1f0f; border: 1.5px solid #2a3e2a;
+      border-radius: 10px; padding: 10px 14px; color: #e8f5e9;
+      font-family: 'Poppins',sans-serif; font-size: 0.85rem;
+      resize: vertical; min-height: 70px; outline: none; margin-bottom: 1.2rem;
+    }
+    .modal-notes:focus { border-color: #2e7d32; }
+    .modal-status-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .status-btn {
+      padding: 7px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; border: 1.5px solid transparent; font-family: 'Poppins',sans-serif;
+      transition: all 0.15s;
+    }
+    .sb-pending    { background: rgba(255,213,79,0.1);  color: #ffd54f; border-color: rgba(255,213,79,0.3); }
+    .sb-reviewed   { background: rgba(129,212,250,0.1); color: #81d4fa; border-color: rgba(129,212,250,0.3); }
+    .sb-accepted   { background: rgba(102,187,106,0.1); color: #a5d6a7; border-color: rgba(102,187,106,0.3); }
+    .sb-rejected   { background: rgba(239,83,80,0.1);   color: #ef9a9a; border-color: rgba(239,83,80,0.3); }
+    .status-btn.active { filter: brightness(1.4); box-shadow: 0 0 0 2px currentColor; }
+    .modal-footer { display: flex; gap: 0.8rem; justify-content: flex-end; }
+
+    /* ===== GALLERY ADMIN ===== */
+    .drop-zone {
+      border: 2px dashed #2e7d32; border-radius: 14px;
+      padding: 3rem 2rem; text-align: center; cursor: pointer;
+      transition: all 0.25s; background: #0f1f0f;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.dragover { border-color: #66bb6a; background: rgba(46,125,50,0.12); }
+    .drop-zone input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+    .drop-zone .dz-icon { font-size: 3rem; margin-bottom: 0.8rem; }
+    .drop-zone h4 { font-size: 1rem; font-weight: 700; color: #a5d6a7; margin-bottom: 0.3rem; }
+    .drop-zone p { font-size: 0.78rem; color: rgba(255,255,255,0.35); }
+    .upload-progress {
+      height: 5px; background: #1a2e1a; border-radius: 10px;
+      margin-top: 1rem; overflow: hidden; display: none;
+    }
+    .upload-progress-bar { height: 100%; background: #66bb6a; border-radius: 10px; width: 0; transition: width 0.3s; }
+
+    .gallery-admin-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem; margin-top: 1.5rem;
+    }
+    .gal-item {
+      background: #0f1f0f; border: 1px solid #2a3e2a;
+      border-radius: 12px; overflow: hidden; position: relative;
+      transition: border-color 0.2s;
+    }
+    .gal-item:hover { border-color: #388e3c; }
+    .gal-item img {
+      width: 100%; aspect-ratio: 4/3; object-fit: cover;
+      display: block; cursor: zoom-in;
+    }
+    .gal-item-body { padding: 0.8rem; }
+    .gal-item-body input {
+      width: 100%; background: #1a2e1a; border: 1px solid #2a3e2a;
+      border-radius: 7px; padding: 7px 10px; color: #e8f5e9;
+      font-family: 'Poppins', sans-serif; font-size: 0.78rem;
+      outline: none; margin-bottom: 0.5rem;
+    }
+    .gal-item-body input:focus { border-color: #2e7d32; }
+    .gal-item-body select {
+      width: 100%; background: #1a2e1a; border: 1px solid #2a3e2a;
+      border-radius: 7px; padding: 7px 10px; color: #e8f5e9;
+      font-family: 'Poppins', sans-serif; font-size: 0.75rem;
+      outline: none; cursor: pointer;
+    }
+    .gal-item-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.5rem 0.8rem; border-top: 1px solid #1a2e1a;
+    }
+    .gal-item-size { font-size: 0.65rem; color: rgba(255,255,255,0.3); }
+    .gal-del-btn {
+      padding: 3px 10px; background: rgba(239,83,80,0.15);
+      color: #ef9a9a; border: 1px solid rgba(239,83,80,0.25);
+      border-radius: 6px; font-size: 0.7rem; cursor: pointer;
+      font-family: 'Poppins',sans-serif; transition: all 0.15s;
+    }
+    .gal-del-btn:hover { background: rgba(239,83,80,0.35); }
+
+    /* Drag handle / order badge */
+    .gal-order-badge {
+      position: absolute; top: 8px; left: 8px;
+      background: rgba(0,0,0,0.55); color: #a5d6a7;
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 700; backdrop-filter: blur(4px);
+    }
+    .gal-span-badge {
+      position: absolute; top: 8px; right: 8px;
+      background: rgba(46,125,50,0.75); color: #fff;
+      padding: 2px 8px; border-radius: 20px;
+      font-size: 0.65rem; font-weight: 700; backdrop-filter: blur(4px);
+    }
+
+    /* Lightbox */
+    #galLightbox {
+      position: fixed; inset: 0; z-index: 9998;
+      background: rgba(0,0,0,0.92); display: none;
+      align-items: center; justify-content: center;
+    }
+    #galLightbox.open { display: flex; }
+    #galLightbox img { max-width: 90vw; max-height: 85vh; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.7); }
+    #galLightbox .lb-close {
+      position: absolute; top: 1.5rem; right: 2rem;
+      color: #fff; font-size: 2rem; cursor: pointer; opacity: 0.7;
+      background: none; border: none; font-family: 'Poppins',sans-serif;
+    }
+    #galLightbox .lb-close:hover { opacity: 1; }
+    #galLightbox .lb-caption {
+      position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.8); font-size: 0.88rem; font-weight: 600;
+      background: rgba(0,0,0,0.5); padding: 8px 20px; border-radius: 20px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Storage bar */
+    .storage-bar-wrap { margin-bottom: 1.5rem; }
+    .storage-bar-label { display: flex; justify-content: space-between; font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-bottom: 6px; }
+    .storage-bar { height: 6px; background: #1a2e1a; border-radius: 10px; overflow: hidden; }
+    .storage-bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s, background 0.5s; background: #66bb6a; }
+
+    .gal-empty {
+      text-align: center; padding: 3rem; color: rgba(255,255,255,0.25);
+      font-size: 0.9rem;
+    }
+    .gal-empty span { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+
+    @media (max-width: 900px) {
+      .sidebar { width: 60px; }
+      .sidebar .brand-name, .sidebar .brand-sub, .sidebar .nav-section, .nav-item span:last-child { display: none; }
+      .main { margin-left: 60px; }
+      .stats-row, .form-grid, .form-grid-3, .form-grid-4, .dashboard-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-admin-grid { grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); }
+    }
+
+    /* Map admin preview */
+    .map-admin-preview {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1.5px solid #2a3e2a;
+      background: #0f1f0f;
+      min-height: 250px;
+    }
+    .map-admin-preview iframe {
+      width: 100%;
+      height: 280px;
+      border: 0;
+      display: block;
+    }
+    .map-status-msg {
+      font-size: 0.78rem;
+      margin-top: 0.5rem;
+      line-height: 1.6;
+    }
+
+    /* ===== EMAIL SETTINGS ===== */
+    .email-status-dot {
+      display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+      margin-right: 6px; vertical-align: middle;
+    }
+    .dot-ok   { background: #66bb6a; box-shadow: 0 0 6px #66bb6a; }
+    .dot-warn { background: #ffd54f; box-shadow: 0 0 6px #ffd54f; }
+    .dot-off  { background: rgba(255,255,255,0.2); }
+    .email-cfg-row {
+      display: flex; gap: 0.5rem; align-items: flex-end; flex-wrap: wrap;
+    }
+    .email-cfg-row .fg { flex: 1; min-width: 180px; margin-bottom: 0; }
+    .send-email-btn {
+      padding: 9px 18px; border-radius: 10px;
+      font-family: 'Poppins', sans-serif; font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; border: none; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 7px;
+    }
+    .send-email-btn.accepted { background: rgba(102,187,106,0.2); color: #a5d6a7; border: 1px solid rgba(102,187,106,0.4); }
+    .send-email-btn.accepted:hover { background: rgba(102,187,106,0.4); }
+    .send-email-btn.rejected { background: rgba(239,83,80,0.15); color: #ef9a9a; border: 1px solid rgba(239,83,80,0.3); }
+    .send-email-btn.rejected:hover { background: rgba(239,83,80,0.3); }
+    .send-email-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .email-log {
+      margin-top: 1rem; font-size: 0.78rem; color: rgba(255,255,255,0.35);
+      background: #0f1f0f; border: 1px solid #2a3e2a; border-radius: 10px;
+      padding: 0.8rem 1rem; max-height: 160px; overflow-y: auto;
+      font-family: monospace; line-height: 1.8;
+    }
+    .email-log .log-ok   { color: #a5d6a7; }
+    .email-log .log-err  { color: #ef9a9a; }
+    .email-log .log-info { color: #81d4fa; }
+    .modal-email-row { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 1.2rem; align-items: center; }
+    .modal-email-badge {
+      font-size: 0.72rem; color: rgba(255,255,255,0.4);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+      padding: 3px 10px; display: inline-flex; align-items: center; gap: 5px;
+    }
+    .modal-email-badge.sent { color: #a5d6a7; border-color: rgba(102,187,106,0.3); }
+  </style>
+</head>
+<body>
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div id="loginOverlay">
+  <div class="login-box">
+    <div class="login-logo">🌿</div>
+    <div class="login-title">Admin Panel</div>
+    <div class="login-sub">Green Guardians — NIELIT</div>
+    <input type="password" id="pwInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button class="login-btn" onclick="doLogin()">🔑 &nbsp; Login</button>
+    <div class="login-error" id="loginErr">❌ Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- ===== LAYOUT ===== -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo">🌿</span>
+      <div>
+        <div class="brand-name">Green Guardians</div>
+        <div class="brand-sub">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Overview</div>
+      <button class="nav-item active" onclick="showTab('dashboard')">
+        <span class="n-icon">🏠</span><span>Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="showTab('applications')">
+        <span class="n-icon">📋</span><span>Applications</span>
+      </button>
+      <div class="nav-section">Sections</div>
+      <button class="nav-item" onclick="showTab('hero')">
+        <span class="n-icon">🎯</span><span>Hero &amp; Stats</span>
+      </button>
+      <button class="nav-item" onclick="showTab('about')">
+        <span class="n-icon">🌍</span><span>About</span>
+      </button>
+      <button class="nav-item" onclick="showTab('activities')">
+        <span class="n-icon">♻️</span><span>Activities</span>
+      </button>
+      <button class="nav-item" onclick="showTab('events')">
+        <span class="n-icon">📅</span><span>Events &amp; Drives</span>
+      </button>
+      <button class="nav-item" onclick="showTab('team')">
+        <span class="n-icon">👥</span><span>Team</span>
+      </button>
+      <button class="nav-item" onclick="showTab('contact')">
+        <span class="n-icon">📬</span><span>Contact</span>
+      </button>
+      <button class="nav-item" onclick="showTab('gallery')">
+        <span class="n-icon">📸</span><span>Gallery</span>
+      </button>
+      <button class="nav-item" onclick="showTab('emailsettings')">
+        <span class="n-icon">📧</span><span>Email Settings</span>
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">🚪 Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- Header -->
+    <div class="page-header">
+      <div>
+        <h1 id="headerTitle">🏠 Dashboard</h1>
+        <p id="headerSub">Welcome back, Admin!</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <button id="globalUndoBtn" type="button" onclick="performUndo()" title="Undo last change (one step back) - Ctrl+Z" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:#e8f5e9;font-weight:600;font-size:0.82rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.16)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'" disabled>
+          <span style="font-size:1rem;">↩️</span>
+          <span>Undo</span>
+          <kbd style="background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.25);border-radius:5px;padding:2px 6px;font-size:0.7rem;color:#81d4fa;font-family:monospace;">Ctrl+Z</kbd>
+          <span id="undoCountBadge" style="display:none;background:#2e7d32;color:#fff;border-radius:10px;padding:1px 6px;font-size:0.7rem;font-weight:700;">0</span>
+        </button>
+        <button id="globalRedoBtn" type="button" onclick="performRedo()" title="Redo change - Ctrl+Y" style="display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.6);font-weight:600;font-size:0.82rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'" disabled>
+          <span style="font-size:1rem;">↪️</span>
+          <span>Redo</span>
+          <kbd style="background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.2);border-radius:5px;padding:2px 6px;font-size:0.7rem;color:#a5d6a7;font-family:monospace;">Ctrl+Y</kbd>
+        </button>
+        <a href="index.html" target="_blank" class="view-site-btn">🌐 View Site</a>
+      </div>
+    </div>
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="tab-panel active" id="tab-dashboard">
+      <!-- Live Database & Backend Status Banner -->
+      <div id="dbAdminStatusBar" style="background:#132613;border:1px solid #2e7d32;border-radius:14px;padding:1.1rem 1.4rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span id="dbAdminStatusDot" style="font-size:1.5rem;">🟢</span>
+          <div>
+            <div id="dbAdminStatusTitle" style="font-weight:700;font-size:0.95rem;color:#a5d6a7;">FastAPI Backend & SQLite Database Connected</div>
+            <div id="dbAdminStatusSub" style="font-size:0.75rem;color:rgba(255,255,255,0.5);">Database file: campus.db &nbsp;•&nbsp; Server: http://localhost:8000</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span id="dbAdminCounts" style="font-size:0.75rem;color:#81c784;background:rgba(46,125,50,0.25);padding:4px 10px;border-radius:12px;border:1px solid rgba(46,125,50,0.4);">Checking...</span>
+          <button type="button" onclick="syncAllWithDatabase(true)" style="padding:8px 16px;background:rgba(46,125,50,0.3);color:#a5d6a7;border:1px solid #2e7d32;border-radius:8px;font-family:'Poppins',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.background='#2e7d32';this.style.color='#fff'" onmouseout="this.style.background='rgba(46,125,50,0.3)';this.style.color='#a5d6a7'">
+            🔄 Sync Live Database
+          </button>
+        </div>
+      </div>
+      <div class="stats-row" style="grid-template-columns:repeat(5,1fr)">
+        <div class="stat-card">
+          <div class="s-num" id="ds-volunteers">500+</div>
+          <div class="s-label">Student Volunteers</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-num" id="ds-drives">80+</div>
+          <div class="s-label">Drives Conducted</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-num" id="ds-waste">2T+</div>
+          <div class="s-label">Waste Recycled</div>
+        </div>
+        <div class="stat-card">
+          <div class="s-num" id="ds-zones">12</div>
+          <div class="s-label">Campus Zones</div>
+        </div>
+        <div class="stat-card" style="cursor:pointer;border-color:#2e7d32;" onclick="showTab('applications')" title="View Applications">
+          <div class="s-num" id="ds-apps" style="color:#ffd54f;">0</div>
+          <div class="s-label">📋 Applications</div>
+        </div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="dash-card" onclick="showTab('hero')">
+          <div class="dc-icon">🎯</div>
+          <h4>Hero &amp; Stats</h4>
+          <p>Edit headline, tagline &amp; impact numbers</p>
+        </div>
+        <div class="dash-card" onclick="showTab('about')">
+          <div class="dc-icon">🌍</div>
+          <h4>About Section</h4>
+          <p>Edit mission text &amp; values</p>
+        </div>
+        <div class="dash-card" onclick="showTab('activities')">
+          <div class="dc-icon">♻️</div>
+          <h4>Activities</h4>
+          <p>Manage What We Do cards</p>
+        </div>
+        <div class="dash-card" onclick="showTab('events')">
+          <div class="dc-icon">📅</div>
+          <h4>Events &amp; Drives</h4>
+          <p id="dash-events-preview">Add, edit &amp; highlight events and drives on calendar</p>
+        </div>
+        <div class="dash-card" onclick="showTab('team')">
+          <div class="dc-icon">👥</div>
+          <h4>Team Members</h4>
+          <p>Manage team cards &amp; roles</p>
+        </div>
+        <div class="dash-card" onclick="showTab('contact')">
+          <div class="dc-icon">📬</div>
+          <h4>Contact Info</h4>
+          <p>Update email, address &amp; social links</p>
+        </div>
+        <div class="dash-card" onclick="showTab('gallery')">
+          <div class="dc-icon">📸</div>
+          <h4>Photo Gallery</h4>
+          <p>Upload &amp; manage event photos</p>
+        </div>
+        <div class="dash-card" onclick="showTab('applications')" style="border-color:#2e7d32;">
+          <div class="dc-icon">📋</div>
+          <h4>Applications DB</h4>
+          <p id="dash-app-preview">View &amp; manage all submitted applications</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== APPLICATIONS TAB ===== -->
+    <div class="tab-panel" id="tab-applications">
+
+      <!-- Summary stats -->
+      <div class="app-summary-row">
+        <div class="app-stat col-total">
+          <div class="as-num" id="app-total">0</div>
+          <div class="as-label">Total</div>
+        </div>
+        <div class="app-stat col-pending">
+          <div class="as-num" id="app-pending">0</div>
+          <div class="as-label">🕐 Pending</div>
+        </div>
+        <div class="app-stat col-reviewed">
+          <div class="as-num" id="app-reviewed">0</div>
+          <div class="as-label">👁️ Reviewed</div>
+        </div>
+        <div class="app-stat col-accepted">
+          <div class="as-num" id="app-accepted">0</div>
+          <div class="as-label">✅ Accepted</div>
+        </div>
+        <div class="app-stat col-rejected">
+          <div class="as-num" id="app-rejected">0</div>
+          <div class="as-label">❌ Rejected</div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <!-- Toolbar -->
+        <div class="db-toolbar">
+          <input type="text" class="db-search" id="appSearch" placeholder="🔍 Search by name, email, department..." oninput="renderAppTable()" />
+          <select class="db-filter" id="appStatusFilter" onchange="renderAppTable()">
+            <option value="all">All Status</option>
+            <option value="pending">🕐 Pending</option>
+            <option value="reviewed">👁️ Reviewed</option>
+            <option value="accepted">✅ Accepted</option>
+            <option value="rejected">❌ Rejected</option>
+          </select>
+          <select class="db-filter" id="appDeptFilter" onchange="renderAppTable()">
+            <option value="all">All Courses</option>
+            <option value="B.Tech">B.Tech</option>
+            <option value="MCA">MCA</option>
+            <option value="BCA">BCA</option>
+            <option value="Others">Others</option>
+          </select>
+          <select class="db-filter" id="appSortFilter" onchange="renderAppTable()">
+            <option value="newest">⬇ Newest First</option>
+            <option value="oldest">⬆ Oldest First</option>
+            <option value="name">🔤 Name A–Z</option>
+          </select>
+          <button class="db-action-btn db-export" onclick="exportCSV()">📥 Export CSV</button>
+          <button class="db-action-btn db-clear-all" onclick="clearAllApplications()">🗑️ Clear All</button>
+        </div>
+
+        <!-- Table -->
+        <div class="app-table-wrap">
+          <table class="app-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>App ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Course</th>
+                <th>Year</th>
+                <th>Status</th>
+                <th>Submitted</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appTableBody">
+              <tr><td colspan="9"><div class="db-empty"><span>📋</span>No applications yet.<br>Submit the form on the site to see entries here.</div></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p id="appTableMeta" style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-top:0.8rem;text-align:right;"></p>
+      </div>
+    </div>
+
+    <!-- ===== HERO TAB ===== -->
+    <div class="tab-panel" id="tab-hero">
+      <div class="admin-card">
+        <h3>🎯 Hero Section</h3>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Main Title (Accent Word)</label>
+            <input type="text" id="h-accentWord" placeholder="Green" />
+          </div>
+          <div class="fg">
+            <label>Main Title (Second Word)</label>
+            <input type="text" id="h-mainWord" placeholder="Guardians" />
+          </div>
+        </div>
+        <div class="fg">
+          <label>Tagline (3 words separated by •)</label>
+          <input type="text" id="h-tagline" placeholder="Segregate • Reduce • Reuse" />
+        </div>
+        <div class="fg">
+          <label>Hero Badge Text</label>
+          <input type="text" id="h-badge" placeholder="NIELIT Campus — Swachh Campus Society" />
+        </div>
+        <div class="fg">
+          <label>Hero Description</label>
+          <textarea id="h-desc" rows="3"></textarea>
+        </div>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Primary Button Text</label>
+            <input type="text" id="h-btn1" placeholder="Join the Club" />
+          </div>
+          <div class="fg">
+            <label>Secondary Button Text</label>
+            <input type="text" id="h-btn2" placeholder="See What We Do →" />
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>📊 Impact Statistics</h3>
+        <div class="form-grid-4">
+          <div class="fg">
+            <label>Volunteers Count</label>
+            <input type="text" id="s-volunteers" placeholder="500+" />
+          </div>
+          <div class="fg">
+            <label>Drives Conducted</label>
+            <input type="text" id="s-drives" placeholder="80+" />
+          </div>
+          <div class="fg">
+            <label>Waste Recycled</label>
+            <input type="text" id="s-waste" placeholder="2T+" />
+          </div>
+          <div class="fg">
+            <label>Campus Zones</label>
+            <input type="text" id="s-zones" placeholder="12" />
+          </div>
+        </div>
+        <div class="form-grid-4">
+          <div class="fg">
+            <label>Volunteers Label</label>
+            <input type="text" id="sl-volunteers" placeholder="Student Volunteers" />
+          </div>
+          <div class="fg">
+            <label>Drives Label</label>
+            <input type="text" id="sl-drives" placeholder="Drives Conducted" />
+          </div>
+          <div class="fg">
+            <label>Waste Label</label>
+            <input type="text" id="sl-waste" placeholder="Waste Recycled" />
+          </div>
+          <div class="fg">
+            <label>Zones Label</label>
+            <input type="text" id="sl-zones" placeholder="Campus Zones Adopted" />
+          </div>
+        </div>
+        <button class="save-btn" onclick="saveHero()">💾 &nbsp; Save Hero Section</button>
+      </div>
+    </div>
+
+    <!-- ===== ABOUT TAB ===== -->
+    <div class="tab-panel" id="tab-about">
+      <div class="admin-card">
+        <h3>🌍 About Section</h3>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Section Tag</label>
+            <input type="text" id="ab-tag" placeholder="🌿 About Us" />
+          </div>
+          <div class="fg">
+            <label>Section Title</label>
+            <input type="text" id="ab-title" placeholder="Why We Exist" />
+          </div>
+        </div>
+        <div class="fg">
+          <label>Subtitle / First Paragraph</label>
+          <textarea id="ab-subtitle" rows="3"></textarea>
+        </div>
+        <div class="fg">
+          <label>Main Body Text (second paragraph)</label>
+          <textarea id="ab-body" rows="4"></textarea>
+        </div>
+        <div class="fg">
+          <label>Recognized By (floating card)</label>
+          <input type="text" id="ab-recognized" placeholder="College Administration" />
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>💎 Values / Chips</h3>
+        <div class="form-grid-4">
+          <div class="fg">
+            <label>Value 1</label>
+            <input type="text" id="ab-v1" placeholder="♻️ Zero-Waste Vision" />
+          </div>
+          <div class="fg">
+            <label>Value 2</label>
+            <input type="text" id="ab-v2" placeholder="🤝 Community-Driven" />
+          </div>
+          <div class="fg">
+            <label>Value 3</label>
+            <input type="text" id="ab-v3" placeholder="🌱 Sustainable Habits" />
+          </div>
+          <div class="fg">
+            <label>Value 4</label>
+            <input type="text" id="ab-v4" placeholder="📢 Awareness First" />
+          </div>
+        </div>
+        <button class="save-btn" onclick="saveAbout()">💾 &nbsp; Save About Section</button>
+      </div>
+
+      <!-- ===== ABOUT PHOTOS CARD ===== -->
+      <div class="admin-card">
+        <h3>📸 Club &amp; Campus Photos</h3>
+        <p style="font-size:0.82rem;color:rgba(255,255,255,0.4);margin-bottom:1.5rem;line-height:1.7;">
+          Upload photos that appear in the <strong style="color:#a5d6a7;">About section</strong> of the website.
+          The <strong>Club Photo</strong> is the main image displayed on the left. The <strong>Campus Photo</strong>
+          appears as a floating card overlay. Max <strong>2 MB</strong> per image.
+        </p>
+
+        <div class="form-grid">
+          <!-- Club Photo -->
+          <div>
+            <div style="font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.7rem;">
+              🏫 Club / Group Photo (main image)
+            </div>
+            <div class="about-photo-drop" id="clubPhotoDrop" onclick="document.getElementById('clubPhotoInput').click()"
+              style="border:2px dashed #2e7d32;border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;background:#0f1f0f;transition:all 0.2s;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;position:relative;overflow:hidden;">
+              <input type="file" id="clubPhotoInput" accept="image/*" style="display:none;" onchange="handleAboutPhoto('club', this.files[0])" />
+              <div id="clubPhotoPreview" style="display:none;width:100%;height:100%;position:absolute;inset:0;">
+                <img id="clubPhotoImg" src="" alt="Club Photo" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" />
+                <div style="position:absolute;bottom:8px;right:8px;">
+                  <button onclick="event.stopPropagation();clearAboutPhoto('club')"
+                    style="padding:4px 10px;background:rgba(239,83,80,0.85);color:#fff;border:none;border-radius:6px;font-size:0.72rem;cursor:pointer;font-family:'Poppins',sans-serif;">
+                    🗑️ Remove
+                  </button>
+                </div>
+              </div>
+              <div id="clubPhotoPlaceholder">
+                <div style="font-size:2.5rem;opacity:0.4;">📷</div>
+                <div style="font-size:0.82rem;color:rgba(255,255,255,0.4);">Click to upload club photo</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);margin-top:3px;">JPG, PNG, WebP — max 2 MB</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Campus Photo -->
+          <div>
+            <div style="font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.7rem;">
+              🏛️ Campus Photo (floating card overlay)
+            </div>
+            <div class="about-photo-drop" id="campusPhotoDrop" onclick="document.getElementById('campusPhotoInput').click()"
+              style="border:2px dashed #2e7d32;border-radius:12px;padding:1.5rem;text-align:center;cursor:pointer;background:#0f1f0f;transition:all 0.2s;min-height:160px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.5rem;position:relative;overflow:hidden;">
+              <input type="file" id="campusPhotoInput" accept="image/*" style="display:none;" onchange="handleAboutPhoto('campus', this.files[0])" />
+              <div id="campusPhotoPreview" style="display:none;width:100%;height:100%;position:absolute;inset:0;">
+                <img id="campusPhotoImg" src="" alt="Campus Photo" style="width:100%;height:100%;object-fit:cover;border-radius:10px;" />
+                <div style="position:absolute;bottom:8px;right:8px;">
+                  <button onclick="event.stopPropagation();clearAboutPhoto('campus')"
+                    style="padding:4px 10px;background:rgba(239,83,80,0.85);color:#fff;border:none;border-radius:6px;font-size:0.72rem;cursor:pointer;font-family:'Poppins',sans-serif;">
+                    🗑️ Remove
+                  </button>
+                </div>
+              </div>
+              <div id="campusPhotoPlaceholder">
+                <div style="font-size:2.5rem;opacity:0.4;">🏛️</div>
+                <div style="font-size:0.82rem;color:rgba(255,255,255,0.4);">Click to upload campus photo</div>
+                <div style="font-size:0.72rem;color:rgba(255,255,255,0.25);margin-top:3px;">JPG, PNG, WebP — max 2 MB</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.2rem;display:flex;gap:1rem;align-items:center;">
+          <button class="save-btn" onclick="saveAboutPhotos()">💾 &nbsp; Save &amp; Publish Photos</button>
+          <span id="aboutPhotoStatus" style="font-size:0.78rem;color:rgba(255,255,255,0.35);"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== ACTIVITIES TAB ===== -->
+    <div class="tab-panel" id="tab-activities">
+      <div class="admin-card">
+        <h3>♻️ Activities — What We Do</h3>
+        <div id="activitiesList" class="item-list"></div>
+        <button class="add-btn" onclick="addActivity()">➕ Add New Activity</button>
+        <br /><br />
+        <button class="save-btn" onclick="saveActivities()">💾 &nbsp; Save Activities</button>
+      </div>
+    </div>
+
+    <!-- ===== EVENTS & DRIVES TAB ===== -->
+    <div class="tab-panel" id="tab-events">
+
+      <!-- Header & Stats Overview -->
+      <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+          <div>
+            <h3 style="margin-bottom:0.3rem;">📅 Events &amp; Drives Manager</h3>
+            <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);">
+              Manage campus clean-up drives, segregation initiatives, workshops, and competitions. Configure dates to automatically highlight them on the main website calendar.
+            </p>
+          </div>
+          <a href="index.html#events" target="_blank" class="view-site-btn">
+            🌐 View Calendar on Site ↗
+          </a>
+        </div>
+
+        <div class="app-summary-row" style="margin-top:1.5rem;margin-bottom:0;">
+          <div class="app-stat col-total">
+            <div class="as-num" id="ev-stat-total">4</div>
+            <div class="as-label">Total Items</div>
+          </div>
+          <div class="app-stat col-accepted">
+            <div class="as-num" id="ev-stat-drives">2</div>
+            <div class="as-label">🗑️ Clean-up Drives</div>
+          </div>
+          <div class="app-stat col-reviewed">
+            <div class="as-num" id="ev-stat-events">2</div>
+            <div class="as-label">🎪 Other Events</div>
+          </div>
+          <div class="app-stat col-pending">
+            <div class="as-num" id="ev-stat-highlighted">4</div>
+            <div class="as-label">🌟 Calendar Highlighted</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Interactive Calendar Preview -->
+      <div class="admin-card" style="margin-bottom:1.5rem;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:0.8rem;">
+          <h3 style="margin-bottom:0;">🗓️ Live Calendar Preview &amp; Date Highlighting</h3>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <button type="button" class="db-action-btn" onclick="prevAdminCalMonth()">‹ Prev</button>
+            <span id="adminCalMonthLabel" style="font-weight:700;color:#a5d6a7;min-width:140px;text-align:center;font-size:0.95rem;">October 2026</span>
+            <button type="button" class="db-action-btn" onclick="nextAdminCalMonth()">Next ›</button>
+          </div>
+        </div>
+        <p style="font-size:0.8rem;color:rgba(255,255,255,0.55);margin-bottom:1rem;">
+          Shows how highlighted event and drive dates appear to students and visitors on the main page. Click any highlighted date in this preview to jump directly to its editor card below!
+        </p>
+
+        <div class="admin-cal-container">
+          <div class="admin-cal-grid" id="adminCalGrid">
+            <!-- Dynamically populated -->
+          </div>
+          <div class="admin-cal-legend">
+            <span><span class="acl-dot acl-drive"></span> <strong>Clean-up / Segregation Drive</strong> (Green highlight)</span>
+            <span><span class="acl-dot acl-event"></span> <strong>Campus Event / Workshop</strong> (Gold highlight)</span>
+            <span><span class="acl-dot acl-today"></span> <strong>Today</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter toolbar & Quick Add Buttons -->
+      <div class="admin-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1.5rem;">
+          <div class="filter-btn-group" style="margin-bottom:0;">
+            <button type="button" class="filter-chip active" id="ev-filter-all" onclick="setEventFilter('all')">All Items (<span id="count-all">0</span>)</button>
+            <button type="button" class="filter-chip" id="ev-filter-drives" onclick="setEventFilter('drives')">🗑️ Drives (<span id="count-drives">0</span>)</button>
+            <button type="button" class="filter-chip" id="ev-filter-events" onclick="setEventFilter('events')">🎪 Events (<span id="count-events">0</span>)</button>
+            <button type="button" class="filter-chip" id="ev-filter-highlighted" onclick="setEventFilter('highlighted')">🌟 Highlighted (<span id="count-highlighted">0</span>)</button>
+          </div>
+
+          <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+            <button type="button" class="save-btn" style="background:#2e7d32;" onclick="addDrive()">
+              ➕ Add Clean-up / Segregation Drive
+            </button>
+            <button type="button" class="save-btn" style="background:#1565c0;" onclick="addEvent()">
+              ➕ Add Campus Event / Workshop
+            </button>
+          </div>
+        </div>
+
+        <!-- Event Cards List -->
+        <div id="eventsList" class="item-list"></div>
+
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:1.8rem;padding-top:1.2rem;border-top:1px solid #2a3e2a;">
+          <button class="save-btn" onclick="saveEvents()">💾 &nbsp; Save Events &amp; Calendar Highlights</button>
+          <button type="button" class="save-btn" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid #2a3e2a;" onclick="resetEventsToDefaults()">🔄 Reset to Defaults</button>
+          <a href="index.html#events" target="_blank" class="view-site-btn">🌐 Preview Live on First Page ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TEAM TAB ===== -->
+    <div class="tab-panel" id="tab-team">
+      <div class="admin-card">
+        <h3>👥 Team Members</h3>
+        <div id="teamList" class="item-list"></div>
+        <button class="add-btn" onclick="addTeamMember()">➕ Add Team Member</button>
+        <br /><br />
+        <button class="save-btn" onclick="saveTeam()">💾 &nbsp; Save Team</button>
+      </div>
+    </div>
+
+    <!-- ===== CONTACT TAB ===== -->
+    <div class="tab-panel" id="tab-contact">
+      <div class="admin-card">
+        <h3>📬 Contact Information</h3>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Email Address</label>
+            <input type="email" id="c-email" placeholder="greenguardians@nielit.edu.in" />
+          </div>
+          <div class="fg">
+            <label>Location / Room</label>
+            <input type="text" id="c-location" placeholder="NIELIT Campus, Student Activity Centre, Room 12" />
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="fg">
+            <label>Club Hours</label>
+            <input type="text" id="c-hours" placeholder="Mon–Fri: 4:00 PM – 6:00 PM" />
+          </div>
+          <div class="fg">
+            <label>Map / Address Description</label>
+            <input type="text" id="c-address" placeholder="NIELIT (National Institute of Electronics & Information Technology)" />
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>🔗 Social Media Links</h3>
+        <div class="form-grid">
+          <div class="fg">
+            <label>📸 Instagram URL</label>
+            <input type="url" id="c-instagram" placeholder="https://instagram.com/..." />
+          </div>
+          <div class="fg">
+            <label>💬 WhatsApp Group Link</label>
+            <input type="url" id="c-whatsapp" placeholder="https://chat.whatsapp.com/..." />
+          </div>
+          <div class="fg">
+            <label>📘 Facebook URL</label>
+            <input type="url" id="c-facebook" placeholder="https://facebook.com/..." />
+          </div>
+          <div class="fg">
+            <label>🐦 Twitter / X URL</label>
+            <input type="url" id="c-twitter" placeholder="https://twitter.com/..." />
+          </div>
+        </div>
+        <button class="save-btn" onclick="saveContact()">💾 &nbsp; Save Contact Info</button>
+      </div>
+
+      <div class="admin-card">
+        <h3>🗺️ Campus Location &amp; Google Map</h3>
+        <p style="font-size:0.82rem;color:rgba(255,255,255,0.45);line-height:1.7;margin-bottom:1.2rem;">
+          You can paste a Google Maps <strong>&lt;iframe&gt; code</strong>, a <strong>Google Maps URL</strong>, or simply type your <strong>campus address/name</strong>.
+        </p>
+
+        <div style="background:#0f1f0f;border:1px solid #2a3e2a;border-radius:12px;padding:1rem 1.2rem;margin-bottom:1.2rem;font-size:0.78rem;color:rgba(255,255,255,0.6);line-height:1.8;">
+          <div style="font-weight:700;color:#ffd54f;margin-bottom:0.4rem;">💡 How to get Google Maps Embed:</div>
+          <div>1. Open <a href="https://maps.google.com" target="_blank" style="color:#81d4fa;">Google Maps</a> and search for your college/campus.</div>
+          <div>2. Click <strong style="color:#e8f5e9;">Share</strong> &rarr; click the <strong style="color:#e8f5e9;">Embed a map</strong> tab &rarr; click <strong style="color:#66bb6a;">COPY HTML</strong>.</div>
+          <div>3. Paste it directly below. <em>(Or paste any Google Maps link, or click "Use Campus Address" below)</em></div>
+        </div>
+
+        <div class="fg">
+          <label>Google Maps Embed Code, URL, or Place Name</label>
+          <textarea id="c-mapEmbed" rows="3" placeholder='Paste &lt;iframe src="..."&gt;&lt;/iframe&gt; or Google Maps URL or place name...' oninput="updateMapPreview()"></textarea>
+        </div>
+
+        <div id="mapStatusMsg" class="map-status-msg"></div>
+
+        <!-- Live Preview -->
+        <div style="margin-top:1rem;">
+          <div style="font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.4);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:0.5px;">Live Preview</div>
+          <div class="map-admin-preview" id="mapAdminPreview">
+            <div style="padding:3rem 1rem;text-align:center;color:rgba(255,255,255,0.3);font-size:0.85rem;">
+              🗺️ Enter a map URL, iframe, or location above to see live preview
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;margin-top:1.2rem;">
+          <button class="save-btn" onclick="saveMapEmbed()">💾 &nbsp; Save Map</button>
+          <button type="button" onclick="autoGenerateMapFromAddress()" style="padding:12px 18px;background:rgba(129,212,250,0.12);color:#81d4fa;border:1px solid rgba(129,212,250,0.3);border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;">📍 Use Campus Address as Map</button>
+          <button type="button" onclick="clearMapEmbed()" style="padding:12px 16px;background:rgba(239,83,80,0.12);color:#ef9a9a;border:1px solid rgba(239,83,80,0.3);border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;">🗑️ Clear Map</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GALLERY TAB ===== -->
+    <div class="tab-panel" id="tab-gallery">
+
+      <!-- Storage Usage Bar -->
+      <div class="admin-card">
+        <h3>📦 Storage Usage <span style="font-size:0.75rem;font-weight:400;color:rgba(255,255,255,0.35);">(localStorage — same browser as site)</span></h3>
+        <div class="storage-bar-wrap">
+          <div class="storage-bar-label">
+            <span id="storageUsed">0 KB used</span>
+            <span id="storagePercent">0% of ~5 MB limit</span>
+          </div>
+          <div class="storage-bar">
+            <div class="storage-bar-fill" id="storageBarFill" style="width:0%"></div>
+          </div>
+        </div>
+        <p style="font-size:0.75rem;color:rgba(255,255,255,0.3);">
+          💡 Images are stored as base64 in your browser's localStorage. Keep total gallery under ~3 MB for best performance. For large collections, use an image hosting service and paste the URL instead.
+        </p>
+      </div>
+
+      <!-- Upload Zone -->
+      <div class="admin-card">
+        <h3>📤 Upload Photos</h3>
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="galleryUploadInput" accept="image/*" multiple onchange="handleGalleryFiles(this.files)" />
+          <div class="dz-icon">📸</div>
+          <h4>Drop photos here or click to browse</h4>
+          <p>Supports JPG, PNG, WebP, GIF &nbsp;·&nbsp; Multiple files allowed &nbsp;·&nbsp; Max 1 MB per image</p>
+        </div>
+        <div class="upload-progress" id="uploadProgress">
+          <div class="upload-progress-bar" id="uploadProgressBar"></div>
+        </div>
+        <p id="uploadStatus" style="font-size:0.78rem;color:rgba(255,255,255,0.35);margin-top:0.6rem;"></p>
+      </div>
+
+      <!-- Gallery Grid -->
+      <div class="admin-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+          <h3 style="margin-bottom:0;">🖼️ Gallery Photos <span id="galCount" style="font-size:0.75rem;font-weight:400;color:rgba(255,255,255,0.35);">(0 photos)</span></h3>
+          <div style="display:flex;gap:0.8rem;align-items:center;">
+            <button class="save-btn" onclick="saveGallery()" style="padding:9px 20px;font-size:0.82rem;">💾 Save &amp; Publish</button>
+            <button onclick="clearAllGallery()" style="padding:9px 16px;background:rgba(239,83,80,0.15);color:#ef9a9a;border:1px solid rgba(239,83,80,0.3);border-radius:8px;font-size:0.78rem;cursor:pointer;font-family:'Poppins',sans-serif;transition:all 0.2s;" onmouseover="this.style.background='rgba(239,83,80,0.3)'" onmouseout="this.style.background='rgba(239,83,80,0.15)'">🗑️ Clear All</button>
+          </div>
+        </div>
+
+        <!-- Filter by category -->
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1rem;">
+          <span style="font-size:0.75rem;color:rgba(255,255,255,0.4);align-self:center;">Filter:</span>
+          <button class="tag-chip tc-drive active" id="gfilter-all" onclick="filterGallery('all', this)">All</button>
+          <button class="tag-chip tc-drive" id="gfilter-drive" onclick="filterGallery('drive', this)" style="background:#e8f5e9;color:#1b5e20;">🗑️ Drive</button>
+          <button class="tag-chip tc-workshop" id="gfilter-workshop" onclick="filterGallery('workshop', this)">✂️ Workshop</button>
+          <button class="tag-chip tc-campaign" id="gfilter-campaign" onclick="filterGallery('campaign', this)">📢 Campaign</button>
+          <button class="tag-chip tc-competition" id="gfilter-competition" onclick="filterGallery('competition', this)">🏆 Competition</button>
+          <button class="tag-chip" style="background:#2a3e2a;color:#a5d6a7;" id="gfilter-other" onclick="filterGallery('other', this)">📷 Other</button>
+        </div>
+
+        <div class="gallery-admin-grid" id="galleryAdminGrid">
+          <div class="gal-empty"><span>📷</span>No photos yet. Upload some above!</div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="galLightbox" onclick="closeLightbox(event)">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lbImg" src="" alt="" />
+  <div class="lb-caption" id="lbCaption"></div>
+</div>
+
+<!-- TOAST -->
+<div id="toast">✅ Saved successfully!</div>
+
+<!-- APPLICATION DETAIL MODAL -->
+<div id="appModal" onclick="closeAppModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAppModal()">✕</button>
+    <div class="modal-id" id="modalId"></div>
+    <div class="modal-name" id="modalName"></div>
+    <div class="modal-date" id="modalDate"></div>
+
+    <div class="modal-grid">
+      <div class="modal-field"><label>Email</label><div class="mf-val" id="modalEmail"></div></div>
+      <div class="modal-field"><label>WhatsApp</label><div class="mf-val" id="modalPhone"></div></div>
+      <div class="modal-field"><label>Department</label><div class="mf-val" id="modalDept"></div></div>
+      <div class="modal-field"><label>Year</label><div class="mf-val" id="modalYear"></div></div>
+    </div>
+
+    <div style="font-size:0.72rem;color:rgba(255,255,255,0.35);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;">Motivation / Why they want to join</div>
+    <div class="modal-motivation" id="modalMotivation"></div>
+
+    <div style="font-size:0.72rem;color:rgba(255,255,255,0.4);margin-bottom:8px;">Change Status</div>
+    <div class="modal-status-row">
+      <button class="status-btn sb-pending"  onclick="setModalStatus('pending')">🕐 Pending</button>
+      <button class="status-btn sb-reviewed" onclick="setModalStatus('reviewed')">👁️ Reviewed</button>
+      <button class="status-btn sb-accepted" onclick="setModalStatus('accepted')">✅ Accept</button>
+      <button class="status-btn sb-rejected" onclick="setModalStatus('rejected')">❌ Reject</button>
+    </div>
+
+    <!-- Email action row in modal -->
+    <div class="modal-email-row" id="modalEmailRow" style="display:none;">
+      <button class="send-email-btn accepted" id="modalSendEmailBtn" onclick="sendEmailFromModal()">
+        📧 Send Notification Email
+      </button>
+      <span class="modal-email-badge" id="modalEmailBadge">📧 No email sent yet</span>
+    </div>
+
+    <span class="modal-notes-label">📝 Admin Notes (internal only)</span>
+    <textarea class="modal-notes" id="modalNotes" placeholder="Add private notes about this applicant..."></textarea>
+
+    <div class="modal-footer">
+      <button onclick="deleteFromModal()" style="padding:10px 18px;background:rgba(239,83,80,0.15);color:#ef9a9a;border:1px solid rgba(239,83,80,0.3);border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.82rem;cursor:pointer;">🗑️ Delete</button>
+      <button onclick="saveModalChanges()" class="save-btn" id="modalSaveBtn" style="padding:10px 22px;">💾 Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EMAIL SETTINGS TAB PANEL (inside #layout > main) ===== -->
+<script>
+// Inject email settings panel into main after DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  const main = document.querySelector('main.main');
+
+  // Tab panel
+  const emailPanel = document.createElement('div');
+  emailPanel.className = 'tab-panel';
+  emailPanel.id = 'tab-emailsettings';
+  emailPanel.innerHTML = `
+    <!-- How to Setup -->
+    <div class="admin-card">
+      <h3>📧 Email Notifications Setup</h3>
+      <p style="font-size:0.82rem;color:rgba(255,255,255,0.5);line-height:1.8;margin-bottom:1.2rem;">
+        When you <strong style="color:#a5d6a7;">Accept</strong> or <strong style="color:#ef9a9a;">Reject</strong> an applicant, 
+        the system will automatically send them a notification email using 
+        <a href="https://www.emailjs.com" target="_blank" style="color:#81d4fa;">EmailJS</a> (free — 200 emails/month).
+      </p>
+      <div style="background:#0f1f0f;border:1px solid #2a3e2a;border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;">
+        <div style="font-size:0.78rem;font-weight:700;color:#ffd54f;margin-bottom:0.8rem;">⚡ Quick Setup Guide (5 minutes)</div>
+        <ol style="font-size:0.78rem;color:rgba(255,255,255,0.55);line-height:2;padding-left:1.2rem;">
+          <li>Go to <a href="https://www.emailjs.com" target="_blank" style="color:#81d4fa;">emailjs.com</a> → Sign Up free</li>
+          <li><strong style="color:#e8f5e9;">Email Services</strong> → Add Service → Choose Gmail (or any email you use) → Connect it</li>
+          <li><strong style="color:#e8f5e9;">Email Templates</strong> → Create Template → Paste the template below → Save → note the <code style="background:#1a2e1a;padding:2px 6px;border-radius:4px;">Template ID</code></li>
+          <li>Go to <strong style="color:#e8f5e9;">Account → General</strong> → copy your <code style="background:#1a2e1a;padding:2px 6px;border-radius:4px;">Public Key</code></li>
+          <li>Fill the three fields below and click <strong style="color:#66bb6a;">Save Email Config</strong></li>
+        </ol>
+      </div>
+
+      <!-- EmailJS template code -->
+      <div style="font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.5px;">
+        📋 Copy-Paste this into your EmailJS Template
+      </div>
+      <div style="background:#0f1f0f;border:1px dashed #2e7d32;border-radius:10px;padding:1rem 1.2rem;font-size:0.78rem;font-family:monospace;color:rgba(255,255,255,0.6);line-height:1.9;white-space:pre-wrap;">Subject: Your Green Guardians Application — {{status_text}}
+
+Dear {{to_name}},
+
+Thank you for applying to join the Green Guardians Club at NIELIT Campus.
+
+We have reviewed your application (ID: {{app_id}}) and are pleased to share the update below:
+
+Status: {{status_text}}
+
+{{message_body}}
+
+If you have any questions, feel free to reply to this email.
+
+Warm regards,
+Green Guardians Team 🌿
+NIELIT Campus — Swachh Campus Society
+greenguardians@nielit.edu.in</div>
+      <p style="font-size:0.72rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">
+        💡 Set the template's <strong>To Email</strong> field to <code style="background:#1a2e1a;padding:1px 5px;border-radius:4px;">{{to_email}}</code> and <strong>From Name</strong> to <code style="background:#1a2e1a;padding:1px 5px;border-radius:4px;">Green Guardians</code>
+      </p>
+    </div>
+
+    <!-- Credentials Form -->
+    <div class="admin-card">
+      <h3>🔑 EmailJS Credentials <span id="emailCfgStatus" style="font-size:0.75rem;font-weight:400;margin-left:8px;"></span></h3>
+      <div class="form-grid-3">
+        <div class="fg">
+          <label>Public Key</label>
+          <input type="text" id="email-public-key" placeholder="e.g. user_xxxxxxxxxxxxxxx" />
+        </div>
+        <div class="fg">
+          <label>Service ID</label>
+          <input type="text" id="email-service-id" placeholder="e.g. service_xxxxxxx" />
+        </div>
+        <div class="fg">
+          <label>Template ID</label>
+          <input type="text" id="email-template-id" placeholder="e.g. template_xxxxxxx" />
+        </div>
+      </div>
+      <div class="fg">
+        <label>Reply-To Email (shown to applicant)</label>
+        <input type="email" id="email-reply-to" placeholder="greenguardians@nielit.edu.in" />
+      </div>
+      <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-top:0.5rem;">
+        <button class="save-btn" onclick="saveEmailConfig()">💾 &nbsp;Save Email Config</button>
+        <button onclick="sendTestEmail()" style="padding:12px 24px;background:rgba(129,212,250,0.1);color:#81d4fa;border:1px solid rgba(129,212,250,0.3);border-radius:10px;font-family:'Poppins',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='rgba(129,212,250,0.2)'" onmouseout="this.style.background='rgba(129,212,250,0.1)'">🧪 Send Test Email</button>
+        <input type="email" id="email-test-addr" placeholder="your@email.com for test" style="flex:1;min-width:200px;padding:12px 14px;border:1.5px solid #2a3e2a;border-radius:10px;background:#0f1f0f;color:#e8f5e9;font-family:'Poppins',sans-serif;font-size:0.88rem;outline:none;" />
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="admin-card">
+      <h3>📨 Email Activity Log</h3>
+      <div class="email-log" id="emailLog">
+        <span class="log-info">No emails sent yet this session.</span>
+      </div>
+      <p style="font-size:0.72rem;color:rgba(255,255,255,0.25);margin-top:0.5rem;">Logs are session-only and reset on page reload.</p>
+    </div>
+  `;
+  main.appendChild(emailPanel);
+});
+</script>
+
+<script>
+// ============================================================
+//  CONFIGURATION — CHANGE PASSWORD HERE
+// ============================================================
+const ADMIN_PASSWORD = "green2026";
+
+// ============================================================
+//  DEFAULT DATA
+// ============================================================
+const defaults = {
+  hero: {
+    accentWord: "Green",
+    mainWord: "Guardians",
+    tagline: "Segregate • Reduce • Reuse",
+    badge: "NIELIT Campus — Swachh Campus Society",
+    desc: "Building a cleaner, greener campus — one drive, one habit, one student at a time. Join us in transforming our college into a model of sustainability.",
+    btn1: "🌱   Join the Club",
+    btn2: "See What We Do →",
+    stats: {
+      volunteers: "500+", drives: "80+", waste: "2T+", zones: "12",
+      lVolunteers: "Student Volunteers", lDrives: "Drives Conducted",
+      lWaste: "Waste Recycled", lZones: "Campus Zones Adopted"
+    }
+  },
+  about: {
+    tag: "🌿 About Us",
+    title: "Why We Exist",
+    subtitle: "Our campus generates hundreds of kilograms of waste every single day — most of it unsegregated, ending up in landfills that harm our environment and community. We refuse to accept that as the norm.",
+    body: "Green Guardians was founded by students who believe every campus has the power to lead by example. Our mission is to build a cleaner, more sustainable NIELIT campus through waste segregation, recycling, composting, and student-led awareness initiatives — creating habits that last a lifetime.",
+    recognized: "College Administration",
+    v1: "♻️ Zero-Waste Vision",
+    v2: "🤝 Community-Driven",
+    v3: "🌱 Sustainable Habits",
+    v4: "📢 Awareness First"
+  },
+  activities: [
+    { icon: "🗑️", bg: "#e8f5e9", title: "Waste Segregation Drives", desc: "Regular wet, dry, and e-waste segregation drives across hostels, departments, and common areas to ensure waste reaches the right bins." },
+    { icon: "🌱", bg: "#fff8e1", title: "Composting Pit & Campus Garden", desc: "We convert organic waste into compost that nourishes our campus garden — a living example of a closed-loop waste system." },
+    { icon: "💻", bg: "#e3f2fd", title: "E-Waste Collection Drives", desc: "Collecting old electronics, batteries, and cables for responsible recycling — keeping hazardous materials out of landfills." },
+    { icon: "🚫🥤", bg: "#fce4ec", title: "Plastic-Free Campus Initiative", desc: "Distributing cloth bags, promoting reusable bottles, and working with the canteen to eliminate single-use plastic on campus." },
+    { icon: "✂️", bg: "#f3e5f5", title: "Upcycling Workshops", desc: "Creative hands-on sessions that teach students how to transform waste materials into useful, beautiful products." },
+    { icon: "🏆", bg: "#e0f2f1", title: "Adopt a Zone Competition", desc: "Hostels and departments compete to maintain the cleanest zones — gamifying cleanliness to build lasting habits and healthy rivalry." },
+    { icon: "📢", bg: "#fff3e0", title: "Awareness Campaigns", desc: "Posters, social media campaigns, flash mobs, and street plays that spread the message of sustainability across the campus community." }
+  ],
+  events: [
+    { day: "05", month: "Oct", year: "2026", tag: "drive", tagLabel: "🗑️ Drive", title: "Campus-Wide Waste Segregation Drive", desc: "All hostel blocks and academic buildings participate in a synchronized wet/dry/e-waste segregation effort.", time: "9:00 AM – 12:00 PM", location: "All Campus Zones", highlightOnCalendar: true, highlightType: "drive" },
+    { day: "12", month: "Oct", year: "2026", tag: "workshop", tagLabel: "✂️ Workshop", title: "Upcycling & Craft Workshop", desc: "Transform plastic bottles, cardboard, and paper into art. Open to all departments — no prior experience needed!", time: "2:00 PM – 5:00 PM", location: "Art Block, Room 204", highlightOnCalendar: true, highlightType: "event" },
+    { day: "19", month: "Oct", year: "2026", tag: "campaign", tagLabel: "📢 Campaign", title: "Plastic-Free Pledge Drive", desc: "Distribute cloth bags and reusable bottles at the campus gate, collect pledges from 500+ students and faculty.", time: "7:30 AM – 10:00 AM", location: "Main Gate & Canteen", highlightOnCalendar: true, highlightType: "drive" },
+    { day: "26", month: "Oct", year: "2026", tag: "competition", tagLabel: "🏆 Competition", title: "Adopt a Zone — Monthly Finale", desc: "Announcement of the cleanest hostel block and department of the month. Winners receive the Golden Leaf Award! 🌿", time: "1:00 PM – 2:30 PM", location: "College Auditorium", highlightOnCalendar: true, highlightType: "event" }
+  ],
+  team: [
+    { avatar: "👨‍🏫", name: "Dr. R. K. Sharma", role: "Faculty Advisor", dept: "Dept. of Electronics", isAdvisor: true },
+    { avatar: "🧑‍🎓", name: "Aarav Mehta", role: "President", dept: "CSE — 3rd Year", isAdvisor: false },
+    { avatar: "👩‍🎓", name: "Priya Singh", role: "Vice President", dept: "ECE — 3rd Year", isAdvisor: false },
+    { avatar: "🧑‍🎓", name: "Rohan Gupta", role: "Secretary", dept: "IT — 2nd Year", isAdvisor: false },
+    { avatar: "👩‍🎓", name: "Sneha Patel", role: "Treasurer", dept: "CSE — 2nd Year", isAdvisor: false },
+    { avatar: "🧑‍🎓", name: "Karan Verma", role: "Event Coordinator", dept: "ME — 3rd Year", isAdvisor: false },
+    { avatar: "👩‍🎓", name: "Anjali Rao", role: "Event Coordinator", dept: "ECE — 2nd Year", isAdvisor: false },
+    { avatar: "👩‍🎓", name: "Riya Nair", role: "Publicity Lead", dept: "IT — 2nd Year", isAdvisor: false }
+  ],
+  contact: {
+    email: "greenguardians@nielit.edu.in",
+    location: "NIELIT Campus, Student Activity Centre, Room 12",
+    hours: "Mon–Fri: 4:00 PM – 6:00 PM",
+    address: "NIELIT (National Institute of Electronics & Information Technology)",
+    instagram: "#",
+    whatsapp: "#",
+    facebook: "#",
+    twitter: "#",
+    mapEmbed: ""
+  }
+};
+
+// ============================================================
+//  STATE & BACKEND API INTEGRATION
+// ============================================================
+const API_BASE = (window.location.origin && window.location.origin.startsWith('http')) 
+  ? window.location.origin 
+  : 'http://127.0.0.1:8000';
+
+function updateBackendStatusBadge(connected, counts, customTitle) {
+  const dot = document.getElementById('dbAdminStatusDot');
+  const title = document.getElementById('dbAdminStatusTitle');
+  const sub = document.getElementById('dbAdminStatusSub');
+  const countBadge = document.getElementById('dbAdminCounts');
+  if (!dot) return;
+
+  if (connected) {
+    dot.textContent = '🟢';
+    title.textContent = customTitle ? `FastAPI & SQLite • ${customTitle}` : 'FastAPI Backend & SQLite Database Connected';
+    title.style.color = '#a5d6a7';
+    sub.textContent = 'Database file: campus.db • Server: ' + API_BASE + ' (Live auto-update active)';
+    if (counts && countBadge) {
+      countBadge.textContent = `${counts.applications || 0} Apps in DB • ${counts.site_content || 0} Content Keys`;
+    }
+  } else {
+    dot.textContent = '🟡';
+    title.textContent = 'Offline Mode (Local Browser Storage)';
+    title.style.color = '#ffd54f';
+    sub.textContent = 'Server at ' + API_BASE + ' not reachable. Changes cached in localStorage.';
+    if (countBadge) countBadge.textContent = 'Offline Cache';
+  }
+}
+
+function loadData(key, fallback) {
+  try { const d = localStorage.getItem('gg_' + key); return d ? JSON.parse(d) : fallback; } catch(e) { return fallback; }
+}
+
+// ============================================================
+//  UNDO / REDO ENGINE (One Step Back)
+// ============================================================
+const undoStack = [];
+const redoStack = [];
+const MAX_UNDO_STEPS = 40;
+
+function getSectionTitle(key) {
+  const map = {
+    hero: 'Hero & Stats',
+    about: 'About Section',
+    activities: 'Activities',
+    events: 'Events & Drives',
+    team: 'Team Members',
+    contact: 'Contact Info & Map',
+    gallery: 'Photo Gallery',
+    about_photos: 'About Photos',
+    email_config: 'Email Settings',
+    applications: 'Applications'
+  };
+  return map[key] || key;
+}
+
+function pushUndoState(state) {
+  undoStack.push(state);
+  if (undoStack.length > MAX_UNDO_STEPS) undoStack.shift();
+  redoStack.length = 0; // Clear redo on new action
+  updateUndoButtonUI();
+}
+
+function updateUndoButtonUI() {
+  const undoBtn = document.getElementById('globalUndoBtn');
+  const redoBtn = document.getElementById('globalRedoBtn');
+  const badge = document.getElementById('undoCountBadge');
+
+  if (undoBtn) {
+    if (undoStack.length > 0) {
+      undoBtn.style.opacity = '1';
+      undoBtn.style.pointerEvents = 'auto';
+      undoBtn.removeAttribute('disabled');
+      const top = undoStack[undoStack.length - 1];
+      undoBtn.title = `Undo: ${top.label || 'Last Change'} (Ctrl+Z)`;
+      if (badge) {
+        badge.style.display = 'inline-block';
+        badge.textContent = undoStack.length;
+      }
+    } else {
+      undoBtn.style.opacity = '0.45';
+      undoBtn.style.pointerEvents = 'none';
+      undoBtn.setAttribute('disabled', 'true');
+      undoBtn.title = 'Nothing to undo (Ctrl+Z)';
+      if (badge) badge.style.display = 'none';
+    }
+  }
+
+  if (redoBtn) {
+    if (redoStack.length > 0) {
+      redoBtn.style.opacity = '1';
+      redoBtn.style.pointerEvents = 'auto';
+      redoBtn.removeAttribute('disabled');
+      const top = redoStack[redoStack.length - 1];
+      redoBtn.title = `Redo: ${top.label || 'Action'} (Ctrl+Y)`;
+    } else {
+      redoBtn.style.opacity = '0.35';
+      redoBtn.style.pointerEvents = 'none';
+      redoBtn.setAttribute('disabled', 'true');
+      redoBtn.title = 'Nothing to redo (Ctrl+Y)';
+    }
+  }
+}
+
+function refreshSectionUI(key) {
+  if (key === 'hero') initHero();
+  else if (key === 'about') initAbout();
+  else if (key === 'activities') renderActivities();
+  else if (key === 'events') renderEvents();
+  else if (key === 'team') renderTeam();
+  else if (key === 'contact') {
+    initContact();
+    if (typeof updateMapPreview === 'function') updateMapPreview();
+  }
+  else if (key === 'gallery') renderGallery();
+  else if (key === 'about_photos') { if (typeof initAboutPhotos === 'function') initAboutPhotos(); }
+  else if (key === 'email_config') { if (typeof initEmailConfig === 'function') initEmailConfig(); }
+  else if (key === 'applications') { if (typeof initApplications === 'function') initApplications(); }
+  if (typeof updateDashStats === 'function') updateDashStats();
+}
+
+async function performUndo() {
+  if (undoStack.length === 0) {
+    toast('ℹ️ Nothing to undo.');
+    return;
+  }
+  const item = undoStack.pop();
+  try {
+    if (item.type === 'section') {
+      const curData = data[item.key] || JSON.parse(localStorage.getItem('gg_' + item.key) || '{}');
+      redoStack.push({ type: 'section', key: item.key, data: JSON.parse(JSON.stringify(curData)), label: item.label });
+      data[item.key] = JSON.parse(JSON.stringify(item.prevData));
+      await saveData(item.key, data[item.key], true);
+      refreshSectionUI(item.key);
+      toast(`↩️ Undone: Reverted ${item.label} (one step back)`);
+    } else if (item.type === 'section_in_memory') {
+      redoStack.push({ type: 'section_in_memory', key: item.key, data: JSON.parse(JSON.stringify(data[item.key])), label: item.label });
+      data[item.key] = JSON.parse(JSON.stringify(item.prevData));
+      refreshSectionUI(item.key);
+      toast(`↩️ Undone: Reverted ${item.label} (one step back)`);
+    } else if (item.type === 'app_delete') {
+      redoStack.push({ type: 'app_delete_redo', appId: item.app.id, idx: item.idx, label: item.label });
+      applications.splice(item.idx, 0, item.app);
+      saveApplications();
+      renderAppTable();
+      try {
+        await fetch(`${API_BASE}/api/applications`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item.app)
+        });
+      } catch(e) {}
+      toast(`↩️ Undone: Restored ${item.label} (one step back)`);
+    } else if (item.type === 'apps_clear') {
+      redoStack.push({ type: 'apps_clear_redo', label: item.label });
+      applications = item.apps;
+      saveApplications();
+      renderAppTable();
+      for (const app of applications) {
+        try {
+          await fetch(`${API_BASE}/api/applications`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(app)
+          });
+        } catch(e) {}
+      }
+      toast(`↩️ Undone: Restored all applications (one step back)`);
+    } else if (item.type === 'app_update') {
+      const cur = JSON.parse(JSON.stringify(applications[item.idx]));
+      redoStack.push({ type: 'app_update', idx: item.idx, prevApp: cur, label: item.label });
+      applications[item.idx] = item.prevApp;
+      saveApplications();
+      renderAppTable();
+      try {
+        await fetch(`${API_BASE}/api/applications/${item.prevApp.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: item.prevApp.status, notes: item.prevApp.notes || '' })
+        });
+      } catch(e) {}
+      toast(`↩️ Undone: Reverted ${item.label} (one step back)`);
+    }
+  } catch(err) {
+    console.error('Error during undo:', err);
+    toast('⚠️ Failed to undo step');
+  }
+  updateUndoButtonUI();
+}
+
+async function performRedo() {
+  if (redoStack.length === 0) {
+    toast('ℹ️ Nothing to redo.');
+    return;
+  }
+  const item = redoStack.pop();
+  try {
+    if (item.type === 'section') {
+      undoStack.push({ type: 'section', key: item.key, prevData: JSON.parse(JSON.stringify(data[item.key])), label: item.label });
+      data[item.key] = JSON.parse(JSON.stringify(item.data));
+      await saveData(item.key, data[item.key], true);
+      refreshSectionUI(item.key);
+      toast(`↪️ Redone: Restored ${item.label}`);
+    } else if (item.type === 'section_in_memory') {
+      undoStack.push({ type: 'section_in_memory', key: item.key, prevData: JSON.parse(JSON.stringify(data[item.key])), label: item.label });
+      data[item.key] = JSON.parse(JSON.stringify(item.data));
+      refreshSectionUI(item.key);
+      toast(`↪️ Redone: Restored ${item.label}`);
+    } else if (item.type === 'app_delete_redo') {
+      await deleteApplication(item.idx);
+    } else if (item.type === 'apps_clear_redo') {
+      await clearAllApplications();
+    } else if (item.type === 'app_update') {
+      applications[item.idx] = item.prevApp;
+      saveApplications();
+      renderAppTable();
+      try {
+        await fetch(`${API_BASE}/api/applications/${item.prevApp.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: item.prevApp.status, notes: item.prevApp.notes || '' })
+        });
+      } catch(e) {}
+      toast(`↪️ Redone: Restored ${item.label}`);
+    }
+  } catch(err) {
+    console.error('Error during redo:', err);
+    toast('⚠️ Failed to redo step');
+  }
+  updateUndoButtonUI();
+}
+
+// Global Keyboard Shortcut Listener for Undo / Redo
+document.addEventListener('keydown', function(e) {
+  // Undo: Ctrl+Z or Cmd+Z (without Shift)
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.shiftKey) {
+    const activeEl = document.activeElement;
+    const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') && activeEl.type !== 'button' && activeEl.type !== 'submit';
+    if (!isTyping) {
+      e.preventDefault();
+      performUndo();
+    }
+  }
+  // Alt+Z: Force Undo from anywhere (even inside input fields)
+  if (e.altKey && e.key.toLowerCase() === 'z') {
+    e.preventDefault();
+    performUndo();
+  }
+  // Redo: Ctrl+Y or Ctrl+Shift+Z or Cmd+Shift+Z
+  if (((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') ||
+      ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'z')) {
+    const activeEl = document.activeElement;
+    const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') && activeEl.type !== 'button' && activeEl.type !== 'submit';
+    if (!isTyping) {
+      e.preventDefault();
+      performRedo();
+    }
+  }
+});
+
+async function saveData(key, val, skipUndo = false) {
+  // Broadcast locally to any open tab in this browser immediately
+  if (adminSyncChannel) {
+    try {
+      adminSyncChannel.postMessage({ type: 'content_updated', key: key, data: val });
+    } catch(e) {}
+  }
+  // Record undo state before modifying
+  if (!skipUndo) {
+    const prevRaw = localStorage.getItem('gg_' + key);
+    if (prevRaw) {
+      try {
+        const prevObj = JSON.parse(prevRaw);
+        if (JSON.stringify(prevObj) !== JSON.stringify(val)) {
+          pushUndoState({
+            type: 'section',
+            key: key,
+            prevData: prevObj,
+            label: getSectionTitle(key)
+          });
+        }
+      } catch(e) {}
+    }
+  }
+
+  try { localStorage.setItem('gg_' + key, JSON.stringify(val)); } catch(e) {}
+  try {
+    const res = await fetch(`${API_BASE}/api/content/${key}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(val)
+    });
+    if (res.ok) {
+      updateBackendStatusBadge(true);
+    }
+  } catch(err) {
+    console.warn(`Could not save ${key} to DB:`, err);
+    updateBackendStatusBadge(false);
+  }
+}
+
+let data = {
+  hero: loadData('hero', defaults.hero),
+  about: loadData('about', defaults.about),
+  activities: loadData('activities', defaults.activities),
+  events: loadData('events', defaults.events),
+  team: loadData('team', defaults.team),
+  contact: loadData('contact', defaults.contact)
+};
+
+// ============================================================
+//  LOGIN & AUTH
+// ============================================================
+async function doLogin() {
+  const pw = document.getElementById('pwInput').value;
+  const storedPw = localStorage.getItem('gg_admin_pw') || ADMIN_PASSWORD;
+
+  let isValid = false;
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    if (res.ok) {
+      const json = await res.json();
+      isValid = json.valid;
+    }
+  } catch(e) {
+    isValid = (pw === storedPw || pw === ADMIN_PASSWORD);
+  }
+
+  if (isValid || pw === storedPw || pw === ADMIN_PASSWORD) {
+    sessionStorage.setItem('gg_admin_logged', '1');
+    document.getElementById('loginOverlay').style.display = 'none';
+    initAll();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('gg_admin_logged');
+  document.getElementById('loginOverlay').style.display = 'flex';
+  document.getElementById('pwInput').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+}
+
+function checkExistingAuth() {
+  if (sessionStorage.getItem('gg_admin_logged') === '1') {
+    const overlay = document.getElementById('loginOverlay');
+    if (overlay) overlay.style.display = 'none';
+    initAll();
+  }
+}
+
+// ============================================================
+//  REAL-TIME AUTOMATIC SYNCHRONIZATION (CROSS-ADMIN & CROSS-TAB)
+// ============================================================
+let adminSyncChannel = null;
+try {
+  if (typeof BroadcastChannel !== 'undefined') {
+    adminSyncChannel = new BroadcastChannel('campus_sync_channel');
+  }
+} catch(e) {}
+
+let adminEventSource = null;
+
+function initAdminRealtimeSync() {
+  // 1. Same-Browser Cross-Tab Listener
+  if (adminSyncChannel) {
+    adminSyncChannel.onmessage = (evt) => {
+      if (!evt.data) return;
+      if (evt.data.type === 'content_updated') {
+        handleIncomingContentSync(evt.data.key, evt.data.data, 'another tab');
+      }
+    };
+  }
+
+  // 2. Server-Sent Events (SSE) Cross-Device / Multi-Admin Listener
+  function startAdminSSE() {
+    if (typeof EventSource === 'undefined') return;
+    try {
+      if (adminEventSource) adminEventSource.close();
+      adminEventSource = new EventSource(`${API_BASE}/api/events`);
+
+      adminEventSource.onopen = () => {
+        updateBackendStatusBadge(true, null, 'Real-Time Auto-Sync Active');
+      };
+
+      adminEventSource.onmessage = (evt) => {
+        if (!evt.data) return;
+        try {
+          const msg = JSON.parse(evt.data);
+          if (msg.type === 'content_updated') {
+            handleIncomingContentSync(msg.key, msg.data, 'server');
+          } else if (msg.type === 'bulk_content_updated') {
+            for (const [k, v] of Object.entries(msg.data || {})) {
+              handleIncomingContentSync(k, v, 'server');
+            }
+          } else if (msg.type === 'application_created') {
+            // Volunteer submitted an application on the public site!
+            if (msg.application) {
+              const exists = applications.some(a => a.id === msg.application.id);
+              if (!exists) {
+                applications.unshift(msg.application);
+                renderAppTable();
+                updateDashStats();
+                toast(`🔔 New application from ${msg.application.firstName || msg.application.first_name || 'Volunteer'}!`);
+              }
+            }
+          } else if (msg.type === 'application_updated' || msg.type === 'application_deleted' || msg.type === 'applications_cleared') {
+            fetchApplicationsFromDB();
+          }
+        } catch(err) {}
+      };
+
+      adminEventSource.onerror = () => {
+        if (adminEventSource) adminEventSource.close();
+        setTimeout(startAdminSSE, 3500);
+      };
+    } catch(e) {
+      console.warn('Admin SSE setup error:', e);
+    }
+  }
+  startAdminSSE();
+}
+
+function handleIncomingContentSync(key, val, source) {
+  if (!key || !val) return;
+  // If user is currently typing in an input field in this section, avoid disrupting focus
+  const activeEl = document.activeElement;
+  const isTyping = activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') && activeEl.type !== 'button' && activeEl.type !== 'submit';
+
+  data[key] = val;
+  try { localStorage.setItem('gg_' + key, JSON.stringify(val)); } catch(e) {}
+
+  if (!isTyping) {
+    refreshSectionUI(key);
+  }
+  toast(`⚡ Auto-synced ${getSectionTitle(key)}!`);
+}
+
+window.addEventListener('DOMContentLoaded', () => { checkExistingAuth(); initAdminRealtimeSync(); });
+
+// ============================================================
+//  TAB NAVIGATION
+// ============================================================
+const TAB_META = {
+  dashboard:    { title: '🏠 Dashboard',       sub: 'Overview of your Green Guardians website' },
+  applications: { title: '📋 Applications',    sub: 'View and manage all submitted volunteer applications' },
+  hero:         { title: '🎯 Hero & Stats',     sub: 'Edit the hero section and impact numbers' },
+  about:        { title: '🌍 About Section',   sub: 'Edit the mission and values' },
+  activities:   { title: '♻️ Activities',       sub: 'Manage What We Do cards' },
+  events:       { title: '📅 Events & Drives', sub: 'Add, edit, manage dates & control calendar highlighting' },
+  team:         { title: '👥 Team Members',     sub: 'Manage team cards' },
+  contact:      { title: '📬 Contact Info',     sub: 'Update contact details and social links' },
+  gallery:      { title: '📸 Photo Gallery',    sub: 'Upload and manage event photos shown on the site' },
+  emailsettings:{ title: '📧 Email Settings',   sub: 'Configure EmailJS to send acceptance/rejection emails' }
+};
+
+function showTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+  const nav = document.querySelector(`.nav-item[onclick="showTab('${name}')"]`);
+  if (nav) nav.classList.add('active');
+  if (TAB_META[name]) {
+    document.getElementById('headerTitle').textContent = TAB_META[name].title;
+    document.getElementById('headerSub').textContent = TAB_META[name].sub;
+  }
+}
+
+// ============================================================
+//  SYNC WITH LIVE DATABASE
+// ============================================================
+async function syncAllWithDatabase(showToast = false) {
+  try {
+    const healthRes = await fetch(`${API_BASE}/api/health`);
+    if (healthRes.ok) {
+      const hData = await healthRes.json();
+      updateBackendStatusBadge(true, hData.counts);
+    } else {
+      updateBackendStatusBadge(false);
+    }
+  } catch(e) {
+    updateBackendStatusBadge(false);
+  }
+
+  // Sync content from SQLite
+  try {
+    const res = await fetch(`${API_BASE}/api/content`);
+    if (res.ok) {
+      const content = await res.json();
+      for (const [k, v] of Object.entries(content)) {
+        try { localStorage.setItem('gg_' + k, JSON.stringify(v)); } catch(e) {}
+        if (data[k] !== undefined) data[k] = v;
+      }
+      // Re-populate fields
+      initHero();
+      initAbout();
+      renderActivities();
+      renderEvents();
+      renderTeam();
+      initContact();
+      if (content.gallery) {
+        galleryItems = Array.isArray(content.gallery) ? content.gallery : [];
+        updateGalleryGrid();
+        updateStorageBar();
+      }
+      if (content.about_photos && typeof initAboutPhotos === 'function') {
+        initAboutPhotos();
+      }
+      if (content.email_config && typeof initEmailConfig === 'function') {
+        initEmailConfig();
+      }
+    }
+  } catch(err) {
+    console.warn('Could not sync content from DB:', err);
+  }
+
+  // Sync applications from SQLite
+  await fetchApplicationsFromDB();
+
+  if (showToast) {
+    toast('✅ Synchronized with live database!');
+  }
+}
+
+// ============================================================
+//  INIT ALL FIELDS
+// ============================================================
+function initAll() {
+  initHero();
+  initAbout();
+  renderActivities();
+  renderEvents();
+  renderTeam();
+  initContact();
+  renderGallery();
+  initApplications();
+  updateDashStats();
+  initEmailConfig();
+  setTimeout(initAboutPhotos, 250);
+
+  // Trigger live database sync asynchronously
+  syncAllWithDatabase();
+}
+
+// ============================================================
+//  HERO
+// ============================================================
+function initHero() {
+  const h = data.hero;
+  document.getElementById('h-accentWord').value = h.accentWord || '';
+  document.getElementById('h-mainWord').value = h.mainWord || '';
+  document.getElementById('h-tagline').value = h.tagline || '';
+  document.getElementById('h-badge').value = h.badge || '';
+  document.getElementById('h-desc').value = h.desc || '';
+  document.getElementById('h-btn1').value = h.btn1 || '';
+  document.getElementById('h-btn2').value = h.btn2 || '';
+  document.getElementById('s-volunteers').value = h.stats.volunteers || '';
+  document.getElementById('s-drives').value = h.stats.drives || '';
+  document.getElementById('s-waste').value = h.stats.waste || '';
+  document.getElementById('s-zones').value = h.stats.zones || '';
+  document.getElementById('sl-volunteers').value = h.stats.lVolunteers || '';
+  document.getElementById('sl-drives').value = h.stats.lDrives || '';
+  document.getElementById('sl-waste').value = h.stats.lWaste || '';
+  document.getElementById('sl-zones').value = h.stats.lZones || '';
+}
+function saveHero() {
+  data.hero = {
+    accentWord: document.getElementById('h-accentWord').value,
+    mainWord: document.getElementById('h-mainWord').value,
+    tagline: document.getElementById('h-tagline').value,
+    badge: document.getElementById('h-badge').value,
+    desc: document.getElementById('h-desc').value,
+    btn1: document.getElementById('h-btn1').value,
+    btn2: document.getElementById('h-btn2').value,
+    stats: {
+      volunteers: document.getElementById('s-volunteers').value,
+      drives: document.getElementById('s-drives').value,
+      waste: document.getElementById('s-waste').value,
+      zones: document.getElementById('s-zones').value,
+      lVolunteers: document.getElementById('sl-volunteers').value,
+      lDrives: document.getElementById('sl-drives').value,
+      lWaste: document.getElementById('sl-waste').value,
+      lZones: document.getElementById('sl-zones').value
+    }
+  };
+  saveData('hero', data.hero);
+  updateDashStats();
+  toast('Hero section saved! ✅');
+}
+
+// ============================================================
+//  ABOUT
+// ============================================================
+function initAbout() {
+  const a = data.about;
+  document.getElementById('ab-tag').value = a.tag || '';
+  document.getElementById('ab-title').value = a.title || '';
+  document.getElementById('ab-subtitle').value = a.subtitle || '';
+  document.getElementById('ab-body').value = a.body || '';
+  document.getElementById('ab-recognized').value = a.recognized || '';
+  document.getElementById('ab-v1').value = a.v1 || '';
+  document.getElementById('ab-v2').value = a.v2 || '';
+  document.getElementById('ab-v3').value = a.v3 || '';
+  document.getElementById('ab-v4').value = a.v4 || '';
+}
+function saveAbout() {
+  data.about = {
+    tag: document.getElementById('ab-tag').value,
+    title: document.getElementById('ab-title').value,
+    subtitle: document.getElementById('ab-subtitle').value,
+    body: document.getElementById('ab-body').value,
+    recognized: document.getElementById('ab-recognized').value,
+    v1: document.getElementById('ab-v1').value,
+    v2: document.getElementById('ab-v2').value,
+    v3: document.getElementById('ab-v3').value,
+    v4: document.getElementById('ab-v4').value
+  };
+  saveData('about', data.about);
+  toast('About section saved! ✅');
+}
+
+// ============================================================
+//  ACTIVITIES
+// ============================================================
+const ICON_OPTIONS = ['🗑️','🌱','💻','🚫🥤','✂️','🏆','📢','🌿','♻️','🔋','🌊','🌍','🚴','🎨','🏗️'];
+const BG_OPTIONS = ['#e8f5e9','#fff8e1','#e3f2fd','#fce4ec','#f3e5f5','#e0f2f1','#fff3e0','#e8eaf6','#fbe9e7'];
+
+function renderActivities() {
+  const list = document.getElementById('activitiesList');
+  list.innerHTML = '';
+  data.activities.forEach((act, i) => {
+    const div = document.createElement('div');
+    div.className = 'item-entry';
+    div.innerHTML = `
+      <div class="item-entry-header">
+        <span class="item-entry-title">${act.icon} Activity ${i + 1}</span>
+        <button class="delete-btn" onclick="deleteActivity(${i})">🗑️ Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Icon Emoji</label>
+          <input type="text" id="act-icon-${i}" value="${act.icon}" placeholder="🗑️" style="font-size:1.3rem;" />
+        </div>
+        <div class="fg">
+          <label>Card Title</label>
+          <input type="text" id="act-title-${i}" value="${act.title}" placeholder="Activity title" />
+        </div>
+      </div>
+      <div class="fg">
+        <label>Description</label>
+        <textarea id="act-desc-${i}" rows="2">${act.desc}</textarea>
+      </div>
+      <div class="fg">
+        <label>Card Background Color</label>
+        <div style="display:flex;align-items:center;gap:1rem;">
+          <input type="color" id="act-bg-${i}" value="${act.bg || '#e8f5e9'}" style="width:48px;height:38px;border-radius:8px;border:none;cursor:pointer;background:none;" />
+          <span style="font-size:0.78rem;color:rgba(255,255,255,0.4);">Icon background color</span>
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function addActivity() {
+  data.activities.push({ icon: '🌟', bg: '#e8f5e9', title: 'New Activity', desc: 'Describe this activity here.' });
+  renderActivities();
+  document.getElementById('activitiesList').lastChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function deleteActivity(i) {
+  if (data.activities.length <= 1) { toast('⚠️ Must have at least 1 activity!'); return; }
+  if (confirm('Delete this activity?')) {
+    pushUndoState({
+      type: 'section_in_memory',
+      key: 'activities',
+      prevData: JSON.parse(JSON.stringify(data.activities)),
+      label: 'Activity Card'
+    });
+    data.activities.splice(i, 1);
+    renderActivities();
+  }
+}
+
+function saveActivities() {
+  const updated = [];
+  data.activities.forEach((_, i) => {
+    updated.push({
+      icon: document.getElementById(`act-icon-${i}`).value,
+      title: document.getElementById(`act-title-${i}`).value,
+      desc: document.getElementById(`act-desc-${i}`).value,
+      bg: document.getElementById(`act-bg-${i}`).value
+    });
+  });
+  data.activities = updated;
+  saveData('activities', data.activities);
+  renderActivities();
+  toast('Activities saved! ✅');
+}
+
+// ============================================================
+//  EVENTS & DRIVES MANAGEMENT
+// ============================================================
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTH_FULL = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const TAG_TYPES = [
+  { key: 'drive', label: '🗑️ Segregation Drive', isDrive: true },
+  { key: 'plantation', label: '🌱 Plantation Drive', isDrive: true },
+  { key: 'ewaste', label: '💻 E-Waste Drive', isDrive: true },
+  { key: 'plasticfree', label: '🚫 Plastic-Free Drive', isDrive: true },
+  { key: 'workshop', label: '✂️ Workshop', isDrive: false },
+  { key: 'campaign', label: '📢 Campaign', isDrive: false },
+  { key: 'competition', label: '🏆 Competition', isDrive: false },
+  { key: 'volunteer', label: '🤝 Volunteer Meet', isDrive: false }
+];
+
+let eventFilter = 'all';
+let adminCalYear = 2026;
+let adminCalMonthIndex = 9; // October (0-indexed)
+
+function setEventFilter(filter) {
+  eventFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  const btn = document.getElementById(`ev-filter-${filter}`);
+  if (btn) btn.classList.add('active');
+  renderEvents();
+}
+
+function updateEventStats() {
+  const total = data.events.length;
+  const drives = data.events.filter(e => isDriveEvent(e)).length;
+  const events = total - drives;
+  const highlighted = data.events.filter(e => e.highlightOnCalendar !== false).length;
+
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setEl('ev-stat-total', total);
+  setEl('ev-stat-drives', drives);
+  setEl('ev-stat-events', events);
+  setEl('ev-stat-highlighted', highlighted);
+
+  setEl('count-all', total);
+  setEl('count-drives', drives);
+  setEl('count-events', events);
+  setEl('count-highlighted', highlighted);
+}
+
+function isDriveEvent(ev) {
+  if (!ev) return false;
+  if (ev.tag === 'drive' || ev.tag === 'plantation' || ev.tag === 'ewaste' || ev.tag === 'plasticfree') return true;
+  if (ev.highlightType === 'drive') return true;
+  const title = (ev.title || '').toLowerCase();
+  const label = (ev.tagLabel || '').toLowerCase();
+  return title.includes('drive') || label.includes('drive');
+}
+
+function renderEvents() {
+  const list = document.getElementById('eventsList');
+  if (!list) return;
+  list.innerHTML = '';
+
+  updateEventStats();
+  renderAdminCalPreview();
+
+  data.events.forEach((ev, i) => {
+    const isDrive = isDriveEvent(ev);
+    const isHighlighted = ev.highlightOnCalendar !== false;
+
+    // Filter check
+    if (eventFilter === 'drives' && !isDrive) return;
+    if (eventFilter === 'events' && isDrive) return;
+    if (eventFilter === 'highlighted' && !isHighlighted) return;
+
+    const div = document.createElement('div');
+    div.className = 'item-entry';
+    div.id = `admin-ev-card-${i}`;
+
+    const tagChips = TAG_TYPES.map(t => `
+      <span class="tag-chip tc-${t.key} ${ev.tag === t.key ? 'active' : ''}"
+        onclick="setEventTag(${i}, '${t.key}', '${t.label}', ${t.isDrive}, this)">${t.label}</span>
+    `).join('');
+
+    // Format ISO date string for input[type=date]
+    const mIdx = MONTHS.findIndex(m => m.toLowerCase() === String(ev.month || '').trim().slice(0,3).toLowerCase());
+    const validM = mIdx !== -1 ? mIdx + 1 : 10;
+    const padM = String(validM).padStart(2, '0');
+    const padD = String(parseInt(ev.day || '1', 10)).padStart(2, '0');
+    const evYear = ev.year || '2026';
+    const dateInputValue = `${evYear}-${padM}-${padD}`;
+
+    div.innerHTML = `
+      <div class="item-entry-header">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span class="item-entry-title">#${i + 1} • ${ev.title || 'Untitled Event'}</span>
+          <span class="event-type-badge ${isDrive ? 'et-drive' : 'et-event'}">
+            ${isDrive ? '🗑️ Clean-up Drive' : '📅 Campus Event'}
+          </span>
+          <span class="event-type-badge" style="background:${isHighlighted ? 'rgba(102,187,106,0.15)' : 'rgba(255,255,255,0.08)'};color:${isHighlighted ? '#a5d6a7' : 'rgba(255,255,255,0.4)'};">
+            ${isHighlighted ? '🌟 Highlighted on Calendar' : '⚪ Not Highlighted'}
+          </span>
+        </div>
+        <button class="delete-btn" onclick="deleteEvent(${i})">🗑️ Remove</button>
+      </div>
+
+      <!-- Category Selector -->
+      <div class="fg" style="margin-bottom:1.2rem;">
+        <label>Event Category / Type</label>
+        <div class="tag-sel" id="ev-tagsel-${i}">${tagChips}</div>
+        <input type="hidden" id="ev-tag-${i}" value="${ev.tag || (isDrive ? 'drive' : 'workshop')}" />
+        <input type="hidden" id="ev-taglabel-${i}" value="${ev.tagLabel || (isDrive ? '🗑️ Drive' : '📅 Event')}" />
+      </div>
+
+      <!-- Date Configuration Grid -->
+      <div class="form-grid-4">
+        <div class="fg">
+          <label>📅 Quick Date Picker</label>
+          <input type="date" id="ev-datepicker-${i}" value="${dateInputValue}" onchange="syncDateFromPicker(${i})" />
+        </div>
+        <div class="fg">
+          <label>Day (1–31)</label>
+          <input type="number" id="ev-day-${i}" value="${parseInt(ev.day || '1', 10)}" min="1" max="31" oninput="syncDateFields(${i})" />
+        </div>
+        <div class="fg">
+          <label>Month</label>
+          <select id="ev-month-${i}" onchange="syncDateFields(${i})">
+            ${MONTHS.map(m => `<option ${String(ev.month).toLowerCase() === m.toLowerCase() ? 'selected' : ''}>${m}</option>`).join('')}
+          </select>
+        </div>
+        <div class="fg">
+          <label>Year</label>
+          <input type="number" id="ev-year-${i}" value="${evYear}" min="2020" max="2035" oninput="syncDateFields(${i})" />
+        </div>
+      </div>
+
+      <!-- Calendar Highlighting Controls -->
+      <div class="highlight-box">
+        <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;font-weight:600;color:#e8f5e9;">
+          <input type="checkbox" id="ev-highlight-${i}" ${isHighlighted ? 'checked' : ''} onchange="onHighlightToggle(${i})" style="width:18px;height:18px;accent-color:#2e7d32;" />
+          <span>🌟 Highlight this event date on the Website Calendar</span>
+        </label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span style="font-size:0.75rem;color:rgba(255,255,255,0.6);">Calendar Style:</span>
+          <select id="ev-hltype-${i}" onchange="renderAdminCalPreview()" style="padding:6px 10px;border-radius:8px;background:#0f1f0f;color:#e8f5e9;border:1px solid #2e7d32;font-size:0.78rem;">
+            <option value="drive" ${ev.highlightType === 'drive' || (!ev.highlightType && isDrive) ? 'selected' : ''}>🟢 Drive Highlight (Green badge & glow)</option>
+            <option value="event" ${ev.highlightType === 'event' || (!ev.highlightType && !isDrive) ? 'selected' : ''}>🟡 Event Highlight (Amber badge & glow)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Event Details -->
+      <div class="fg">
+        <label>Event Title</label>
+        <input type="text" id="ev-title-${i}" value="${ev.title}" placeholder="e.g. Campus-Wide Waste Segregation Drive" oninput="onTitleChange(${i})" />
+      </div>
+      <div class="fg">
+        <label>Description</label>
+        <textarea id="ev-desc-${i}" rows="2" placeholder="Brief details about what will happen...">${ev.desc}</textarea>
+      </div>
+      <div class="form-grid">
+        <div class="fg">
+          <label>🕐 Time</label>
+          <input type="text" id="ev-time-${i}" value="${ev.time}" placeholder="9:00 AM – 12:00 PM" />
+        </div>
+        <div class="fg">
+          <label>📍 Location</label>
+          <input type="text" id="ev-location-${i}" value="${ev.location}" placeholder="All Campus Zones" />
+        </div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+
+  if (list.children.length === 0) {
+    list.innerHTML = `
+      <div style="text-align:center;padding:3rem 1rem;background:#0f1f0f;border-radius:12px;color:rgba(255,255,255,0.4);">
+        <p style="font-size:1.1rem;margin-bottom:0.5rem;">No items matching filter "<strong>${eventFilter}</strong>"</p>
+        <button class="save-btn" onclick="setEventFilter('all')" style="background:#2e7d32;padding:8px 18px;font-size:0.82rem;">Show All Items</button>
+      </div>
+    `;
+  }
+}
+
+function onTitleChange(i) {
+  const val = document.getElementById(`ev-title-${i}`).value;
+  if (data.events[i]) {
+    data.events[i].title = val;
+    renderAdminCalPreview();
+  }
+}
+
+function onHighlightToggle(i) {
+  const chk = document.getElementById(`ev-highlight-${i}`);
+  if (data.events[i]) {
+    data.events[i].highlightOnCalendar = chk.checked;
+    updateEventStats();
+    renderAdminCalPreview();
+  }
+}
+
+function syncDateFromPicker(i) {
+  const picker = document.getElementById(`ev-datepicker-${i}`);
+  if (!picker || !picker.value) return;
+  const parts = picker.value.split('-');
+  if (parts.length === 3) {
+    const year = parts[0];
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+
+    document.getElementById(`ev-day-${i}`).value = day;
+    document.getElementById(`ev-month-${i}`).value = MONTHS[monthIndex];
+    document.getElementById(`ev-year-${i}`).value = year;
+
+    if (data.events[i]) {
+      data.events[i].day = String(day).padStart(2, '0');
+      data.events[i].month = MONTHS[monthIndex];
+      data.events[i].year = year;
+    }
+    renderAdminCalPreview();
+  }
+}
+
+function syncDateFields(i) {
+  const day = parseInt(document.getElementById(`ev-day-${i}`).value || '1', 10);
+  const month = document.getElementById(`ev-month-${i}`).value;
+  const year = document.getElementById(`ev-year-${i}`).value || '2026';
+
+  const mIdx = MONTHS.findIndex(m => m.toLowerCase() === month.toLowerCase());
+  const padM = String(mIdx !== -1 ? mIdx + 1 : 1).padStart(2, '0');
+  const padD = String(day).padStart(2, '0');
+
+  const picker = document.getElementById(`ev-datepicker-${i}`);
+  if (picker) picker.value = `${year}-${padM}-${padD}`;
+
+  if (data.events[i]) {
+    data.events[i].day = padD;
+    data.events[i].month = month;
+    data.events[i].year = year;
+  }
+  renderAdminCalPreview();
+}
+
+function setEventTag(i, key, label, isDrive, el) {
+  document.getElementById(`ev-tag-${i}`).value = key;
+  document.getElementById(`ev-taglabel-${i}`).value = label;
+  document.querySelectorAll(`#ev-tagsel-${i} .tag-chip`).forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+
+  const hlSelect = document.getElementById(`ev-hltype-${i}`);
+  if (hlSelect) {
+    hlSelect.value = isDrive ? 'drive' : 'event';
+  }
+
+  if (data.events[i]) {
+    data.events[i].tag = key;
+    data.events[i].tagLabel = label;
+    data.events[i].highlightType = isDrive ? 'drive' : 'event';
+  }
+  renderAdminCalPreview();
+}
+
+function addDrive() {
+  data.events.push({
+    day: '15',
+    month: 'Oct',
+    year: '2026',
+    tag: 'drive',
+    tagLabel: '🗑️ Drive',
+    title: 'Campus Clean-up & Segregation Drive',
+    desc: 'Synchronized hostel and academic area cleanliness and waste segregation drive.',
+    time: '9:00 AM – 12:00 PM',
+    location: 'Campus Grounds & Hostels',
+    highlightOnCalendar: true,
+    highlightType: 'drive'
+  });
+  renderEvents();
+  const list = document.getElementById('eventsList');
+  if (list && list.lastChild) list.lastChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function addEvent() {
+  data.events.push({
+    day: '20',
+    month: 'Oct',
+    year: '2026',
+    tag: 'workshop',
+    tagLabel: '✂️ Workshop',
+    title: 'Upcycling & Creative Sustainability Workshop',
+    desc: 'Hands-on training session on waste reduction and creative upcycling for all students.',
+    time: '2:00 PM – 4:30 PM',
+    location: 'Student Activity Centre',
+    highlightOnCalendar: true,
+    highlightType: 'event'
+  });
+  renderEvents();
+  const list = document.getElementById('eventsList');
+  if (list && list.lastChild) list.lastChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function deleteEvent(i) {
+  if (confirm(`Remove event "${data.events[i].title}"?`)) {
+    pushUndoState({
+      type: 'section_in_memory',
+      key: 'events',
+      prevData: JSON.parse(JSON.stringify(data.events)),
+      label: 'Event'
+    });
+    data.events.splice(i, 1);
+    renderEvents();
+    toast('Event removed');
+  }
+}
+
+function saveEvents() {
+  const updated = [];
+  data.events.forEach((_, i) => {
+    const dayVal = document.getElementById(`ev-day-${i}`);
+    if (!dayVal) {
+      // Item was filtered out from view, keep existing data
+      updated.push(data.events[i]);
+      return;
+    }
+    const day = String(dayVal.value).padStart(2, '0');
+    const month = document.getElementById(`ev-month-${i}`).value;
+    const year = document.getElementById(`ev-year-${i}`).value || '2026';
+    const tag = document.getElementById(`ev-tag-${i}`).value;
+    const tagLabel = document.getElementById(`ev-taglabel-${i}`).value;
+    const highlightOnCalendar = document.getElementById(`ev-highlight-${i}`).checked;
+    const highlightType = document.getElementById(`ev-hltype-${i}`).value;
+    const title = document.getElementById(`ev-title-${i}`).value;
+    const desc = document.getElementById(`ev-desc-${i}`).value;
+    const time = document.getElementById(`ev-time-${i}`).value;
+    const location = document.getElementById(`ev-location-${i}`).value;
+
+    updated.push({
+      day, month, year, tag, tagLabel,
+      highlightOnCalendar, highlightType,
+      title, desc, time, location
+    });
+  });
+
+  data.events = updated;
+  saveData('events', data.events);
+  renderEvents();
+  toast('Events & Calendar Highlights saved! ✅');
+}
+
+function resetEventsToDefaults() {
+  if (confirm('Reset events and drives to the original 4 default initiatives?')) {
+    data.events = JSON.parse(JSON.stringify(defaults.events));
+    saveData('events', data.events);
+    renderEvents();
+    toast('Events reset to defaults! 🌿');
+  }
+}
+
+// ============================================================
+//  ADMIN CALENDAR PREVIEW
+// ============================================================
+function prevAdminCalMonth() {
+  adminCalMonthIndex--;
+  if (adminCalMonthIndex < 0) {
+    adminCalMonthIndex = 11;
+    adminCalYear--;
+  }
+  renderAdminCalPreview();
+}
+
+function nextAdminCalMonth() {
+  adminCalMonthIndex++;
+  if (adminCalMonthIndex > 11) {
+    adminCalMonthIndex = 0;
+    adminCalYear++;
+  }
+  renderAdminCalPreview();
+}
+
+function renderAdminCalPreview() {
+  const grid = document.getElementById('adminCalGrid');
+  const label = document.getElementById('adminCalMonthLabel');
+  if (!grid || !label) return;
+
+  label.textContent = `${MONTH_FULL[adminCalMonthIndex]} ${adminCalYear}`;
+  grid.innerHTML = '';
+
+  const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  dayNames.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'admin-cal-day-name';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+
+  const firstDay = new Date(adminCalYear, adminCalMonthIndex, 1).getDay();
+  const totalDays = new Date(adminCalYear, adminCalMonthIndex + 1, 0).getDate();
+  const shortM = MONTHS[adminCalMonthIndex].toLowerCase();
+
+  const now = new Date();
+  const isNowMonth = now.getFullYear() === adminCalYear && now.getMonth() === adminCalMonthIndex;
+  const todayNum = now.getDate();
+
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'admin-cal-day empty';
+    grid.appendChild(empty);
+  }
+
+  for (let d = 1; d <= totalDays; d++) {
+    const dayEl = document.createElement('div');
+    dayEl.className = 'admin-cal-day';
+    dayEl.textContent = d;
+
+    if (isNowMonth && d === todayNum) {
+      dayEl.classList.add('today');
+    }
+
+    const matches = data.events.filter(ev => {
+      if (ev.highlightOnCalendar === false) return false;
+      if (parseInt(ev.day, 10) !== d) return false;
+      const evM = String(ev.month || '').trim().toLowerCase();
+      if (!evM.startsWith(shortM)) return false;
+      if (ev.year && parseInt(ev.year, 10) !== adminCalYear) return false;
+      return true;
+    });
+
+    if (matches.length > 0) {
+      const hasDrive = matches.some(e => isDriveEvent(e));
+      if (hasDrive) {
+        dayEl.classList.add('acl-drive');
+      } else {
+        dayEl.classList.add('acl-event');
+      }
+      dayEl.title = matches.map(e => `${e.tagLabel || '📅'} ${e.title} (${e.time})`).join(' • ');
+
+      dayEl.addEventListener('click', () => {
+        // Find index of first matching event in data.events
+        const idx = data.events.findIndex(e => e === matches[0]);
+        if (idx !== -1) {
+          const card = document.getElementById(`admin-ev-card-${idx}`);
+          if (card) {
+            card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            card.style.borderColor = '#66bb6a';
+            card.style.background = '#1b381b';
+            setTimeout(() => {
+              card.style.borderColor = '';
+              card.style.background = '';
+            }, 1800);
+          }
+        }
+      });
+    }
+
+    grid.appendChild(dayEl);
+  }
+}
+
+// ============================================================
+//  TEAM
+// ============================================================
+const AVATAR_OPTIONS = ['👨‍🏫','👩‍🏫','🧑‍🎓','👨‍🎓','👩‍🎓','🧑','👨','👩','🧑‍💼','👨‍💼','👩‍💼'];
+
+function renderTeam() {
+  const list = document.getElementById('teamList');
+  list.innerHTML = '';
+  data.team.forEach((m, i) => {
+    const div = document.createElement('div');
+    div.className = 'item-entry';
+    div.innerHTML = `
+      <div class="item-entry-header">
+        <span class="item-entry-title">${m.avatar} ${m.name} — ${m.role}</span>
+        <button class="delete-btn" onclick="deleteTeamMember(${i})">🗑️ Remove</button>
+      </div>
+      <div class="form-grid">
+        <div class="fg">
+          <label>Avatar Emoji</label>
+          <input type="text" id="tm-avatar-${i}" value="${m.avatar}" style="font-size:1.5rem;" />
+        </div>
+        <div class="fg">
+          <label>Full Name</label>
+          <input type="text" id="tm-name-${i}" value="${m.name}" />
+        </div>
+        <div class="fg">
+          <label>Role / Position</label>
+          <input type="text" id="tm-role-${i}" value="${m.role}" placeholder="President" />
+        </div>
+        <div class="fg">
+          <label>Department / Year</label>
+          <input type="text" id="tm-dept-${i}" value="${m.dept}" placeholder="CSE — 3rd Year" />
+        </div>
+      </div>
+      <div class="fg">
+        <label>Type</label>
+        <select id="tm-advisor-${i}">
+          <option value="false" ${!m.isAdvisor ? 'selected' : ''}>🧑‍🎓 Student Member</option>
+          <option value="true" ${m.isAdvisor ? 'selected' : ''}>👨‍🏫 Faculty Advisor</option>
+        </select>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function addTeamMember() {
+  data.team.push({ avatar: '🧑‍🎓', name: 'New Member', role: 'Role', dept: 'Dept — Year', isAdvisor: false });
+  renderTeam();
+  document.getElementById('teamList').lastChild.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function deleteTeamMember(i) {
+  if (data.team.length <= 1) { toast('⚠️ Must have at least 1 team member!'); return; }
+  if (confirm('Remove this team member?')) {
+    pushUndoState({
+      type: 'section_in_memory',
+      key: 'team',
+      prevData: JSON.parse(JSON.stringify(data.team)),
+      label: 'Team Member'
+    });
+    data.team.splice(i, 1);
+    renderTeam();
+  }
+}
+
+function saveTeam() {
+  const updated = [];
+  data.team.forEach((_, i) => {
+    updated.push({
+      avatar: document.getElementById(`tm-avatar-${i}`).value,
+      name: document.getElementById(`tm-name-${i}`).value,
+      role: document.getElementById(`tm-role-${i}`).value,
+      dept: document.getElementById(`tm-dept-${i}`).value,
+      isAdvisor: document.getElementById(`tm-advisor-${i}`).value === 'true'
+    });
+  });
+  data.team = updated;
+  saveData('team', data.team);
+  renderTeam();
+  toast('Team saved! ✅');
+}
+
+// ============================================================
+//  CONTACT
+// ============================================================
+function initContact() {
+  const c = data.contact;
+  document.getElementById('c-email').value = c.email || '';
+  document.getElementById('c-location').value = c.location || '';
+  document.getElementById('c-hours').value = c.hours || '';
+  document.getElementById('c-address').value = c.address || '';
+  document.getElementById('c-instagram').value = c.instagram || '';
+  document.getElementById('c-whatsapp').value = c.whatsapp || '';
+  document.getElementById('c-facebook').value = c.facebook || '';
+  document.getElementById('c-twitter').value = c.twitter || '';
+  document.getElementById('c-mapEmbed').value = c.mapEmbed || '';
+  setTimeout(updateMapPreview, 100);
+}
+
+function saveContact() {
+  data.contact = {
+    ...data.contact,
+    email: document.getElementById('c-email').value,
+    location: document.getElementById('c-location').value,
+    hours: document.getElementById('c-hours').value,
+    address: document.getElementById('c-address').value,
+    instagram: document.getElementById('c-instagram').value,
+    whatsapp: document.getElementById('c-whatsapp').value,
+    facebook: document.getElementById('c-facebook').value,
+    twitter: document.getElementById('c-twitter').value,
+    mapEmbed: document.getElementById('c-mapEmbed')?.value ?? (data.contact.mapEmbed || '')
+  };
+  saveData('contact', data.contact);
+  if (typeof updateMapPreview === 'function') updateMapPreview();
+  toast('Contact info & Map saved! ✅');
+}
+
+function updateMapPreview() {
+  const input = document.getElementById('c-mapEmbed')?.value || '';
+  const fallback = document.getElementById('c-address')?.value || 'NIELIT Campus';
+  const previewDiv = document.getElementById('mapAdminPreview');
+  const statusEl = document.getElementById('mapStatusMsg');
+  if (!previewDiv) return;
+
+  if (!input.trim()) {
+    previewDiv.innerHTML = '<div style="padding:3rem 1rem;text-align:center;color:rgba(255,255,255,0.3);font-size:0.85rem;">🗺️ Enter a map URL, iframe, or location above to see live preview</div>';
+    if (statusEl) statusEl.innerHTML = '';
+    return;
+  }
+
+  const raw = input.trim();
+  let statusHtml = '';
+
+  if (raw.includes('maps.app.goo.gl') || raw.includes('goo.gl/maps')) {
+    statusHtml = '<span style="color:#ffd54f;">⚠️ Note: <strong>maps.app.goo.gl</strong> is a short link that Google prevents from direct iframe embedding. We converted it using your campus location ("' + escHtml(fallback) + '") with a direct link button. For your exact pinpoint: Open Google Maps &rarr; Share &rarr; Embed a map &rarr; Copy HTML.</span>';
+  } else if (raw.toLowerCase().includes('<iframe') || raw.includes('google.com/maps/embed')) {
+    statusHtml = '<span style="color:#a5d6a7;">✅ Google Maps Embed detected and ready.</span>';
+  } else if (raw.startsWith('http://') || raw.startsWith('https://')) {
+    statusHtml = '<span style="color:#81d4fa;">ℹ️ Map URL detected. Converting to embed.</span>';
+  } else {
+    statusHtml = '<span style="color:#a5d6a7;">✅ Location converted to live Google Map!</span>';
+  }
+
+  if (statusEl) statusEl.innerHTML = statusHtml;
+
+  const html = parseMapEmbedHtml(raw, fallback);
+  if (html) {
+    previewDiv.innerHTML = html;
+  } else {
+    previewDiv.innerHTML = '<div style="padding:3rem 1rem;text-align:center;color:#ef9a9a;font-size:0.85rem;">❌ Could not generate map preview. Please check your link.</div>';
+  }
+}
+
+function autoGenerateMapFromAddress() {
+  const addr = document.getElementById('c-address')?.value || 'NIELIT Campus';
+  const textarea = document.getElementById('c-mapEmbed');
+  if (textarea) {
+    textarea.value = addr;
+    updateMapPreview();
+    toast('📍 Generated map from campus address!');
+  }
+}
+
+function clearMapEmbed() {
+  const textarea = document.getElementById('c-mapEmbed');
+  if (textarea) {
+    textarea.value = '';
+    updateMapPreview();
+    toast('Map field cleared.');
+  }
+}
+
+function saveMapEmbed() {
+  data.contact.mapEmbed = document.getElementById('c-mapEmbed').value;
+  saveData('contact', data.contact);
+  updateMapPreview();
+  toast('Map saved successfully! ✅');
+}
+
+function parseMapEmbedHtml(rawInput, fallbackAddress) {
+  const defaultAddr = (fallbackAddress && fallbackAddress.trim()) ? fallbackAddress.trim() : 'NIELIT Campus India';
+  if (!rawInput || !rawInput.trim()) {
+    return `<iframe src="https://maps.google.com/maps?q=${encodeURIComponent(defaultAddr)}&t=&z=15&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0; width:100%; height:100%; min-height:280px; display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  }
+  let str = rawInput.trim();
+
+  if (str.toLowerCase().includes('<iframe')) {
+    const srcMatch = str.match(/src=["']([^"']+)["']/i);
+    if (srcMatch && srcMatch[1]) {
+      str = srcMatch[1];
+    } else {
+      return str.replace(/width=["'][^"']*["']/gi, 'width="100%"')
+                .replace(/height=["'][^"']*["']/gi, 'height="100%"')
+                .replace(/style=["'][^"']*["']/gi, 'style="border:0; width:100%; height:100%; min-height:280px; display:block;"');
+    }
+  }
+
+  str = str.replace(/^["']|["']$/g, '').trim();
+
+  if (str.includes('google.com/maps/embed') || str.includes('output=embed')) {
+    return `<iframe src="${str}" width="100%" height="100%" style="border:0; width:100%; height:100%; min-height:280px; display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  }
+
+  if (str.includes('google.com/maps/place/')) {
+    const placeMatch = str.match(/google\.com\/maps\/place\/([^/@?]+)/i);
+    if (placeMatch && placeMatch[1]) {
+      const placeName = decodeURIComponent(placeMatch[1].replace(/\+/g, ' '));
+      const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(placeName)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+      return `<iframe src="${embedUrl}" width="100%" height="100%" style="border:0; width:100%; height:100%; min-height:280px; display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+    }
+  }
+
+  if (str.includes('google.com/maps') && str.includes('q=')) {
+    const qMatch = str.match(/[?&]q=([^&]+)/i);
+    if (qMatch && qMatch[1]) {
+      const query = decodeURIComponent(qMatch[1].replace(/\+/g, ' '));
+      const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+      return `<iframe src="${embedUrl}" width="100%" height="100%" style="border:0; width:100%; height:100%; min-height:280px; display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+    }
+  }
+
+  if (str.includes('maps.app.goo.gl') || str.includes('goo.gl/maps')) {
+    const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(defaultAddr)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+    return `
+      <div style="position:relative; width:100%; height:100%; min-height:280px;">
+        <iframe src="${embedUrl}" width="100%" height="100%" style="border:0; width:100%; height:100%; min-height:280px; display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <a href="${str}" target="_blank" rel="noopener noreferrer" style="position:absolute; bottom:12px; right:12px; background:rgba(27,94,32,0.92); color:#fff; padding:6px 14px; border-radius:20px; font-size:0.75rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:5px; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:5;">
+          📍 Open in Google Maps ↗
+        </a>
+      </div>`;
+  }
+
+  if (!str.startsWith('http://') && !str.startsWith('https://')) {
+    const embedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(str)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+    return `<iframe src="${embedUrl}" width="100%" height="100%" style="border:0; width:100%; height:100%; min-height:280px; display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+  }
+
+  return `<iframe src="${str}" width="100%" height="100%" style="border:0; width:100%; height:100%; min-height:280px; display:block;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+}
+
+// ============================================================
+//  DASHBOARD STATS
+// ============================================================
+function updateDashStats() {
+  const s = data.hero.stats;
+  document.getElementById('ds-volunteers').textContent = s.volunteers || '—';
+  document.getElementById('ds-drives').textContent = s.drives || '—';
+  document.getElementById('ds-waste').textContent = s.waste || '—';
+  document.getElementById('ds-zones').textContent = s.zones || '—';
+  // Live application count from localStorage
+  try {
+    const apps = JSON.parse(localStorage.getItem('gg_applications') || '[]');
+    const el = document.getElementById('ds-apps');
+    if (el) el.textContent = apps.length;
+  } catch(e) {}
+}
+
+// ============================================================
+//  TOAST
+// ============================================================
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3000);
+}
+
+// ============================================================
+//  INIT (do not run until logged in)
+// ============================================================
+// initAll() is called after successful login
+
+// ============================================================
+//  GALLERY
+// ============================================================
+// Gallery items: { src: base64String, label: string, category: string, span: 'normal'|'wide'|'tall' }
+let galleryItems = [];
+let galCurrentFilter = 'all';
+
+function loadGallery() {
+  try {
+    const d = localStorage.getItem('gg_gallery');
+    return d ? JSON.parse(d) : [];
+  } catch(e) { return []; }
+}
+
+function renderGallery() {
+  galleryItems = loadGallery();
+  updateGalleryGrid();
+  updateStorageBar();
+  // Wire drag-and-drop on drop zone
+  const dz = document.getElementById('dropZone');
+  if (dz && !dz._dzReady) {
+    dz._dzReady = true;
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault(); dz.classList.remove('dragover');
+      handleGalleryFiles(e.dataTransfer.files);
+    });
+  }
+}
+
+function updateGalleryGrid() {
+  const grid = document.getElementById('galleryAdminGrid');
+  const count = document.getElementById('galCount');
+  if (!grid) return;
+
+  const filtered = galCurrentFilter === 'all'
+    ? galleryItems
+    : galleryItems.filter(g => g.category === galCurrentFilter);
+
+  count.textContent = `(${galleryItems.length} photo${galleryItems.length !== 1 ? 's' : ''})`;
+
+  if (filtered.length === 0) {
+    grid.innerHTML = galCurrentFilter === 'all'
+      ? '<div class="gal-empty"><span>📷</span>No photos yet. Upload some above!</div>'
+      : '<div class="gal-empty"><span>🔍</span>No photos in this category.</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  filtered.forEach((item, filtIdx) => {
+    // Find real index in galleryItems
+    const realIdx = galleryItems.indexOf(item);
+    const spanLabel = item.span === 'wide' ? 'Wide' : item.span === 'tall' ? 'Tall' : null;
+    const sizeKB = item.src ? Math.round(item.src.length * 0.75 / 1024) : 0;
+
+    const div = document.createElement('div');
+    div.className = 'gal-item';
+    div.innerHTML = `
+      <div class="gal-order-badge">${realIdx + 1}</div>
+      ${spanLabel ? `<div class="gal-span-badge">${spanLabel}</div>` : ''}
+      <img src="${item.src}" alt="${item.label || ''}" onclick="openLightbox('${realIdx}')" loading="lazy" />
+      <div class="gal-item-body">
+        <input type="text" placeholder="Photo caption / label..." value="${escHtml(item.label || '')}"
+          onchange="galleryItems[${realIdx}].label = this.value" />
+        <select onchange="galleryItems[${realIdx}].category = this.value">
+          <option value="other" ${(item.category||'other')==='other'?'selected':''}>📷 Other</option>
+          <option value="drive" ${item.category==='drive'?'selected':''}>🗑️ Drive</option>
+          <option value="workshop" ${item.category==='workshop'?'selected':''}>✂️ Workshop</option>
+          <option value="campaign" ${item.category==='campaign'?'selected':''}>📢 Campaign</option>
+          <option value="competition" ${item.category==='competition'?'selected':''}>🏆 Competition</option>
+        </select>
+      </div>
+      <div style="padding:0 0.8rem 0.6rem;">
+        <select style="width:100%;background:#1a2e1a;border:1px solid #2a3e2a;border-radius:7px;padding:5px 10px;color:#e8f5e9;font-family:'Poppins',sans-serif;font-size:0.72rem;outline:none;cursor:pointer;"
+          onchange="galleryItems[${realIdx}].span = this.value; updateGalleryGrid();">
+          <option value="normal" ${(item.span||'normal')==='normal'?'selected':''}>📐 Normal size</option>
+          <option value="wide" ${item.span==='wide'?'selected':''}>↔️ Wide (2 columns)</option>
+          <option value="tall" ${item.span==='tall'?'selected':''}>↕️ Tall (2 rows)</option>
+        </select>
+      </div>
+      <div class="gal-item-footer">
+        <span class="gal-item-size">${sizeKB} KB</span>
+        <button class="gal-del-btn" onclick="deleteGalleryItem(${realIdx})">🗑️ Remove</button>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function handleGalleryFiles(files) {
+  if (!files || files.length === 0) return;
+  const MAX_SIZE = 1.5 * 1024 * 1024; // 1.5 MB per file
+  const progress = document.getElementById('uploadProgress');
+  const bar = document.getElementById('uploadProgressBar');
+  const status = document.getElementById('uploadStatus');
+  const fileArr = Array.from(files);
+  let loaded = 0, skipped = 0;
+
+  progress.style.display = 'block';
+  bar.style.width = '0%';
+
+  function processNext(i) {
+    if (i >= fileArr.length) {
+      bar.style.width = '100%';
+      const msg = loaded > 0
+        ? `✅ ${loaded} photo${loaded>1?'s':''} uploaded${skipped>0?' ('+skipped+' skipped — too large)':''}`
+        : `⚠️ All ${skipped} file${skipped>1?'s':''} were too large (max 1.5 MB each)`;
+      status.textContent = msg;
+      status.style.color = loaded > 0 ? '#a5d6a7' : '#ef9a9a';
+      setTimeout(() => { progress.style.display = 'none'; }, 1500);
+      updateGalleryGrid();
+      updateStorageBar();
+      document.getElementById('galleryUploadInput').value = '';
+      return;
+    }
+
+    const file = fileArr[i];
+    bar.style.width = Math.round((i / fileArr.length) * 90) + '%';
+
+    if (file.size > MAX_SIZE) {
+      skipped++;
+      processNext(i + 1);
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      skipped++;
+      processNext(i + 1);
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      galleryItems.push({
+        src: e.target.result,
+        label: file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+        category: 'other',
+        span: 'normal',
+        uploadedAt: new Date().toISOString()
+      });
+      loaded++;
+      processNext(i + 1);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  processNext(0);
+}
+
+function deleteGalleryItem(idx) {
+  if (confirm('Remove this photo from the gallery?')) {
+    galleryItems.splice(idx, 1);
+    updateGalleryGrid();
+    updateStorageBar();
+  }
+}
+
+function saveGallery() {
+  try {
+    localStorage.setItem('gg_gallery', JSON.stringify(galleryItems));
+    saveData('gallery', galleryItems);
+    updateStorageBar();
+    toast('Gallery saved & published! ✅');
+  } catch(e) {
+    toast('⚠️ Storage full! Remove some photos first.');
+  }
+}
+
+function clearAllGallery() {
+  if (galleryItems.length === 0) { toast('Gallery is already empty.'); return; }
+  if (confirm(`Remove all ${galleryItems.length} photos from the gallery? This cannot be undone.`)) {
+    galleryItems = [];
+    localStorage.removeItem('gg_gallery');
+    updateGalleryGrid();
+    updateStorageBar();
+    toast('All photos cleared.');
+  }
+}
+
+function filterGallery(cat, el) {
+  galCurrentFilter = cat;
+  document.querySelectorAll('#tab-gallery .tag-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  updateGalleryGrid();
+}
+
+// Lightbox
+function openLightbox(idxStr) {
+  const idx = parseInt(idxStr);
+  const item = galleryItems[idx];
+  if (!item) return;
+  document.getElementById('lbImg').src = item.src;
+  document.getElementById('lbCaption').textContent = item.label || '';
+  document.getElementById('galLightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (e && e.target !== document.getElementById('galLightbox') && !e.target.classList.contains('lb-close')) return;
+  document.getElementById('galLightbox').classList.remove('open');
+  document.getElementById('lbImg').src = '';
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox({ target: document.getElementById('galLightbox') }); });
+
+// Storage meter (~5 MB localStorage typical limit)
+function updateStorageBar() {
+  let total = 0;
+  try { for (let k in localStorage) { if (localStorage.hasOwnProperty(k)) total += localStorage[k].length * 2; } } catch(e) {}
+  const kb = Math.round(total / 1024);
+  const mb = (kb / 1024).toFixed(2);
+  const pct = Math.min(100, Math.round(kb / 51200 * 100)); // ~5MB
+  document.getElementById('storageUsed').textContent = kb > 1024 ? mb + ' MB used' : kb + ' KB used';
+  document.getElementById('storagePercent').textContent = pct + '% of ~5 MB limit';
+  const fill = document.getElementById('storageBarFill');
+  fill.style.width = pct + '%';
+  fill.style.background = pct > 85 ? '#ef9a9a' : pct > 60 ? '#ffb74d' : '#66bb6a';
+}
+// ============================================================
+//  APPLICATIONS DATABASE & SQLite SYNC
+// ============================================================
+let applications = [];
+let currentModalIdx = -1;
+
+function loadApplications() {
+  try {
+    const d = localStorage.getItem('gg_applications');
+    return d ? JSON.parse(d) : [];
+  } catch(e) { return []; }
+}
+
+async function fetchApplicationsFromDB() {
+  try {
+    const res = await fetch(`${API_BASE}/api/applications`);
+    if (res.ok) {
+      const list = await res.json();
+      if (Array.isArray(list)) {
+        applications = list;
+        try { localStorage.setItem('gg_applications', JSON.stringify(applications)); } catch(e) {}
+        renderAppTable();
+        updateAppStats();
+      }
+    }
+  } catch(err) {
+    console.warn('Could not fetch applications from DB, using local cache:', err);
+  }
+}
+
+async function saveApplications() {
+  try {
+    localStorage.setItem('gg_applications', JSON.stringify(applications));
+  } catch(e) { toast('⚠️ Could not save locally — storage may be full.'); }
+}
+
+function initApplications() {
+  applications = loadApplications();
+  renderAppTable();
+  updateAppStats();
+  fetchApplicationsFromDB();
+}
+
+function updateAppStats() {
+  const all = applications;
+  const counts = { total: all.length, pending: 0, reviewed: 0, accepted: 0, rejected: 0 };
+  all.forEach(a => { if (counts[a.status] !== undefined) counts[a.status]++; });
+
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set('app-total', counts.total);
+  set('app-pending', counts.pending);
+  set('app-reviewed', counts.reviewed);
+  set('app-accepted', counts.accepted);
+  set('app-rejected', counts.rejected);
+  // dashboard stat
+  set('ds-apps', counts.total);
+  // dashboard card preview
+  const prev = document.getElementById('dash-app-preview');
+  if (prev) prev.textContent = `${counts.total} total · ${counts.pending} pending · ${counts.accepted} accepted`;
+}
+
+function renderAppTable() {
+  updateAppStats();
+
+  const search = (document.getElementById('appSearch')?.value || '').toLowerCase();
+  const statusF = document.getElementById('appStatusFilter')?.value || 'all';
+  const deptF   = document.getElementById('appDeptFilter')?.value || 'all';
+  const sortF   = document.getElementById('appSortFilter')?.value || 'newest';
+
+  let filtered = applications.filter(a => {
+    const matchSearch = !search
+      || ((a.firstName || '') + ' ' + (a.lastName || '')).toLowerCase().includes(search)
+      || (a.email || '').toLowerCase().includes(search)
+      || (a.dept || a.course || '').toLowerCase().includes(search)
+      || (a.id || '').toLowerCase().includes(search);
+    const matchStatus = statusF === 'all' || a.status === statusF;
+    const matchDept   = deptF === 'all' || (a.dept || a.course) === deptF;
+    return matchSearch && matchStatus && matchDept;
+  });
+
+  // Sort
+  if (sortF === 'oldest') filtered.sort((a,b) => new Date(a.submittedAt) - new Date(b.submittedAt));
+  else if (sortF === 'name') filtered.sort((a,b) => ((a.firstName||'')+(a.lastName||'')).localeCompare((b.firstName||'')+(b.lastName||'')));
+  // newest is default
+
+  const tbody = document.getElementById('appTableBody');
+  const meta  = document.getElementById('appTableMeta');
+  if (!tbody) return;
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="db-empty"><span>📋</span>${
+      applications.length === 0
+        ? 'No applications yet.<br>Students who fill the Join form will appear here live from the database.'
+        : 'No results match your filters.'
+    }</div></td></tr>`;
+    if (meta) meta.textContent = '';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  filtered.forEach((app, i) => {
+    const realIdx = applications.indexOf(app);
+    const date = new Date(app.submittedAt || app.submitted_at || Date.now());
+    const dateStr = date.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+    const timeStr = date.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:rgba(255,255,255,0.3);font-size:0.75rem;">${i + 1}</td>
+      <td><div class="app-id">${app.id || '—'}</div></td>
+      <td>
+        <div class="app-name">${safeText(app.firstName || app.first_name)} ${safeText(app.lastName || app.last_name)}</div>
+      </td>
+      <td style="font-size:0.78rem;">${safeText(app.email)}</td>
+      <td style="font-size:0.75rem;max-width:140px;white-space:normal;">${safeText(app.dept || app.course || '—')}</td>
+      <td style="font-size:0.78rem;white-space:nowrap;">${safeText(app.year || '—')}</td>
+      <td><span class="status-badge s-${app.status||'pending'}">${statusLabel(app.status)}</span></td>
+      <td>
+        <div class="app-date">${dateStr}</div>
+        <div class="app-date">${timeStr}</div>
+      </td>
+      <td>
+        <div class="row-btns">
+          <button class="row-btn view" onclick="openAppModal(${realIdx})">👁️ View</button>
+          <button class="row-btn del"  onclick="deleteApplication(${realIdx})">🗑️</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  if (meta) meta.textContent = `Showing ${filtered.length} of ${applications.length} application${applications.length !== 1 ? 's' : ''}`;
+}
+
+function safeText(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function statusLabel(s) {
+  return { pending: '🕐 Pending', reviewed: '👁️ Reviewed', accepted: '✅ Accepted', rejected: '❌ Rejected' }[s] || '🕐 Pending';
+}
+
+async function deleteApplication(idx) {
+  const app = applications[idx];
+  if (!app) return;
+  if (confirm(`Delete application from ${app.firstName || app.first_name} ${app.lastName || app.last_name}? This will remove it from the SQLite database.`)) {
+    const appId = app.id;
+    pushUndoState({
+      type: 'app_delete',
+      app: JSON.parse(JSON.stringify(app)),
+      idx: idx,
+      label: `Application (${app.firstName || app.first_name || 'Volunteer'})`
+    });
+    applications.splice(idx, 1);
+    saveApplications();
+    renderAppTable();
+    try {
+      await fetch(`${API_BASE}/api/applications/${appId}`, { method: 'DELETE' });
+    } catch(e) { console.warn('Could not delete from DB:', e); }
+    toast('Application deleted from database.');
+  }
+}
+
+async function clearAllApplications() {
+  if (applications.length === 0) { toast('No applications to clear.'); return; }
+  if (confirm(`Permanently delete ALL ${applications.length} applications from the database? This cannot be undone.`)) {
+    pushUndoState({
+      type: 'apps_clear',
+      apps: JSON.parse(JSON.stringify(applications)),
+      label: 'All Applications'
+    });
+    applications = [];
+    localStorage.removeItem('gg_applications');
+    renderAppTable();
+    try {
+      await fetch(`${API_BASE}/api/applications`, { method: 'DELETE' });
+    } catch(e) { console.warn('Could not clear DB:', e); }
+    toast('All applications cleared from database.');
+  }
+}
+
+// ── MODAL ──
+let _modalPrevStatus = '';
+
+function openAppModal(idx) {
+  const app = applications[idx];
+  if (!app) return;
+  currentModalIdx = idx;
+  _modalPrevStatus = app.status || 'pending';
+
+  document.getElementById('modalId').textContent   = app.id || '';
+  document.getElementById('modalName').textContent  = (app.firstName || app.first_name || '') + ' ' + (app.lastName || app.last_name || '');
+  const d = new Date(app.submittedAt || app.submitted_at || Date.now());
+  document.getElementById('modalDate').textContent  = 'Submitted: ' + d.toLocaleString('en-IN', { dateStyle:'long', timeStyle:'short' });
+  document.getElementById('modalEmail').textContent = app.email || '—';
+  document.getElementById('modalPhone').textContent = app.phone || 'Not provided';
+  document.getElementById('modalDept').textContent  = app.dept || app.course || '—';
+  document.getElementById('modalYear').textContent  = app.year || '—';
+  document.getElementById('modalMotivation').textContent = app.motivation || '—';
+  document.getElementById('modalNotes').value       = app.notes || '';
+
+  // Highlight current status button
+  document.querySelectorAll('.modal-status-row .status-btn').forEach(b => b.classList.remove('active'));
+  const sb = document.querySelector(`.sb-${app.status || 'pending'}`);
+  if (sb) sb.classList.add('active');
+
+  // Email row
+  updateModalEmailRow(app.status || 'pending', app.emailSentFor || app.email_sent_for || '');
+
+  document.getElementById('appModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function updateModalEmailRow(status, emailSentFor) {
+  const row = document.getElementById('modalEmailRow');
+  const btn = document.getElementById('modalSendEmailBtn');
+  const badge = document.getElementById('modalEmailBadge');
+  if (!row || !btn || !badge) return;
+
+  if (status === 'accepted' || status === 'rejected') {
+    row.style.display = 'flex';
+    btn.className = 'send-email-btn ' + status;
+    btn.innerHTML = status === 'accepted'
+      ? '📧 Send Acceptance Email'
+      : '📧 Send Rejection Email';
+
+    if (emailSentFor === status) {
+      badge.className = 'modal-email-badge sent';
+      badge.textContent = '✅ Email already sent for this status';
+    } else {
+      badge.className = 'modal-email-badge';
+      badge.textContent = '📧 No email sent for this status yet';
+    }
+  } else {
+    row.style.display = 'none';
+  }
+}
+
+function setModalStatus(status) {
+  if (currentModalIdx < 0) return;
+  applications[currentModalIdx].status = status;
+  document.querySelectorAll('.modal-status-row .status-btn').forEach(b => b.classList.remove('active'));
+  const sb = document.querySelector(`.sb-${status}`);
+  if (sb) sb.classList.add('active');
+  updateModalEmailRow(status, applications[currentModalIdx].emailSentFor || applications[currentModalIdx].email_sent_for || '');
+}
+
+async function saveModalChanges() {
+  if (currentModalIdx < 0 || !applications[currentModalIdx]) return;
+  const app = applications[currentModalIdx];
+  pushUndoState({
+    type: 'app_update',
+    idx: currentModalIdx,
+    prevApp: JSON.parse(JSON.stringify(app)),
+    label: 'Application (' + (app.firstName || app.first_name || 'Volunteer') + ')'
+  });
+  app.notes = document.getElementById('modalNotes').value;
+  const newStatus = app.status;
+  saveApplications();
+  renderAppTable();
+
+  // Persist change to SQLite database
+  try {
+    await fetch(`${API_BASE}/api/applications/${app.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: newStatus,
+        notes: app.notes,
+        emailSentFor: app.emailSentFor || app.email_sent_for || ''
+      })
+    });
+  } catch(e) {
+    console.warn('Could not save modal change to DB:', e);
+  }
+
+  // Auto-send email if status changed to accepted or rejected
+  if ((newStatus === 'accepted' || newStatus === 'rejected') && newStatus !== _modalPrevStatus) {
+    document.getElementById('appModal').classList.remove('open');
+    document.body.style.overflow = '';
+    const savedIdx = currentModalIdx;
+    currentModalIdx = -1;
+    _modalPrevStatus = newStatus;
+    toast(`Application updated! Sending ${newStatus} email... 📧`);
+    sendStatusEmail(app, newStatus).then(async () => {
+      applications[savedIdx].emailSentFor = newStatus;
+      saveApplications();
+      try {
+        await fetch(`${API_BASE}/api/applications/${app.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ emailSentFor: newStatus })
+        });
+      } catch(e) {}
+      toast(`✅ Application saved to database & email sent to ${app.email}!`);
+    }).catch(err => {
+      toast(`✅ Saved to DB — but email failed: ${err}. Configure EmailJS in ⚙️ Email Settings.`);
+    });
+  } else {
+    document.getElementById('appModal').classList.remove('open');
+    document.body.style.overflow = '';
+    currentModalIdx = -1;
+    toast('Application updated in database! ✅');
+  }
+}
+
+function sendEmailFromModal() {
+  if (currentModalIdx < 0) return;
+  const app = applications[currentModalIdx];
+  const status = app.status;
+  if (status !== 'accepted' && status !== 'rejected') {
+    toast('⚠️ Set status to Accepted or Rejected first!');
+    return;
+  }
+  const btn = document.getElementById('modalSendEmailBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Sending...';
+  sendStatusEmail(app, status).then(() => {
+    applications[currentModalIdx].emailSentFor = status;
+    saveApplications();
+    updateModalEmailRow(status, status);
+    btn.disabled = false;
+    toast(`✅ Email sent to ${app.email}!`);
+  }).catch(err => {
+    btn.disabled = false;
+    updateModalEmailRow(status, app.emailSentFor || '');
+    toast(`❌ Email failed: ${err}. Check Email Settings.`);
+  });
+}
+
+function deleteFromModal() {
+  if (currentModalIdx < 0) return;
+  const app = applications[currentModalIdx];
+  if (confirm(`Delete ${app.firstName} ${app.lastName}'s application?`)) {
+    document.getElementById('appModal').classList.remove('open');
+    document.body.style.overflow = '';
+    const idx = currentModalIdx;
+    currentModalIdx = -1;
+    applications.splice(idx, 1);
+    saveApplications();
+    renderAppTable();
+    toast('Application deleted.');
+  }
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Escape' && document.getElementById('appModal').classList.contains('open')) {
+    document.getElementById('appModal').classList.remove('open');
+    document.body.style.overflow = '';
+    currentModalIdx = -1;
+  }
+});
+
+function closeAppModal(e) {
+  if (e && e.target !== document.getElementById('appModal')) return;
+  document.getElementById('appModal').classList.remove('open');
+  document.body.style.overflow = '';
+  currentModalIdx = -1;
+}
+
+// ── CSV EXPORT ──
+function exportCSV() {
+  const apps = loadApplications();
+  if (apps.length === 0) { toast('No applications to export.'); return; }
+
+  const headers = ['App ID','First Name','Last Name','Email','WhatsApp','Department','Year','Status','Motivation','Notes','Submitted At'];
+  const rows = apps.map(a => [
+    a.id, a.firstName, a.lastName, a.email, a.phone || '',
+    a.dept, a.year, a.status, a.motivation, a.notes || '',
+    new Date(a.submittedAt).toLocaleString('en-IN')
+  ].map(v => '"' + String(v||'').replace(/"/g, '""') + '"'));
+
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const ts = new Date().toISOString().slice(0,10);
+  link.href = url;
+  link.download = `GreenGuardians_Applications_${ts}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+  toast(`📥 Exported ${apps.length} applications as CSV!`);
+}
+
+// ============================================================
+//  EMAIL (EmailJS)
+// ============================================================
+function loadEmailConfig() {
+  try {
+    const d = localStorage.getItem('gg_email_config');
+    return d ? JSON.parse(d) : { publicKey: '', serviceId: '', templateId: '', replyTo: '' };
+  } catch(e) {
+    return { publicKey: '', serviceId: '', templateId: '', replyTo: '' };
+  }
+}
+
+function initEmailConfig() {
+  // Run after DOM is ready (email settings panel is injected via DOMContentLoaded)
+  setTimeout(() => {
+    const cfg = loadEmailConfig();
+    const pk = document.getElementById('email-public-key');
+    const si = document.getElementById('email-service-id');
+    const ti = document.getElementById('email-template-id');
+    const rt = document.getElementById('email-reply-to');
+    if (pk) pk.value = cfg.publicKey || '';
+    if (si) si.value = cfg.serviceId || '';
+    if (ti) ti.value = cfg.templateId || '';
+    if (rt) rt.value = cfg.replyTo || '';
+    updateEmailCfgStatus(cfg);
+    // Init EmailJS if key exists
+    if (cfg.publicKey && typeof emailjs !== 'undefined') {
+      emailjs.init(cfg.publicKey);
+    }
+  }, 200);
+}
+
+function updateEmailCfgStatus(cfg) {
+  const el = document.getElementById('emailCfgStatus');
+  if (!el) return;
+  if (cfg.publicKey && cfg.serviceId && cfg.templateId) {
+    el.innerHTML = '<span class="email-status-dot dot-ok"></span>Configured ✅';
+  } else if (cfg.publicKey || cfg.serviceId || cfg.templateId) {
+    el.innerHTML = '<span class="email-status-dot dot-warn"></span>Incomplete — fill all 3 fields';
+  } else {
+    el.innerHTML = '<span class="email-status-dot dot-off"></span>Not configured';
+  }
+}
+
+function saveEmailConfig() {
+  const cfg = {
+    publicKey:  (document.getElementById('email-public-key')?.value || '').trim(),
+    serviceId:  (document.getElementById('email-service-id')?.value || '').trim(),
+    templateId: (document.getElementById('email-template-id')?.value || '').trim(),
+    replyTo:    (document.getElementById('email-reply-to')?.value || '').trim()
+  };
+  localStorage.setItem('gg_email_config', JSON.stringify(cfg));
+  saveData('email_config', cfg);
+  if (cfg.publicKey && typeof emailjs !== 'undefined') {
+    emailjs.init(cfg.publicKey);
+  }
+  updateEmailCfgStatus(cfg);
+  toast('Email config saved! ✅');
+  emailLog('info', 'Config saved. EmailJS ' + (cfg.publicKey ? 'initialized.' : 'not yet initialized (missing Public Key).'));
+}
+
+function sendStatusEmail(app, status) {
+  const cfg = loadEmailConfig();
+  if (!cfg.publicKey || !cfg.serviceId || !cfg.templateId) {
+    emailLog('err', `Email NOT sent to ${app.email} — EmailJS not configured. Go to 📧 Email Settings.`);
+    return Promise.reject('EmailJS not configured');
+  }
+  if (typeof emailjs === 'undefined') {
+    emailLog('err', 'EmailJS library not loaded. Check internet connection.');
+    return Promise.reject('EmailJS library unavailable');
+  }
+  // Re-init just to be safe
+  emailjs.init(cfg.publicKey);
+
+  const isAccepted = status === 'accepted';
+  const params = {
+    to_name:     (app.firstName || '') + ' ' + (app.lastName || ''),
+    to_email:    app.email || '',
+    app_id:      app.id || '',
+    status:      status,
+    status_text: isAccepted ? '✅ Accepted' : '❌ Rejected',
+    message_body: isAccepted
+      ? `Congratulations! 🎉 We are delighted to welcome you to the Green Guardians family.\n\nWe will reach out soon with your onboarding details, first meeting schedule, and what to expect next. Get ready to make a difference! 🌿`
+      : `After careful consideration, we regret that we are unable to accept your application at this time.\n\nWe truly appreciate your enthusiasm for a greener campus and encourage you to stay connected with our events and initiatives. You are always welcome to apply again in the future!`,
+    reply_to:    cfg.replyTo || 'greenguardians@nielit.edu.in',
+    club_name:   'Green Guardians'
+  };
+
+  emailLog('info', `Sending ${status} email to ${app.email} (${app.firstName} ${app.lastName})...`);
+  return emailjs.send(cfg.serviceId, cfg.templateId, params)
+    .then(res => {
+      emailLog('ok', `✅ Email sent to ${app.email} — Status: ${res.status} ${res.text}`);
+      return res;
+    })
+    .catch(err => {
+      const msg = typeof err === 'object' ? (err.text || JSON.stringify(err)) : String(err);
+      emailLog('err', `❌ Failed to send to ${app.email}: ${msg}`);
+      throw msg;
+    });
+}
+
+function sendTestEmail() {
+  const testAddr = (document.getElementById('email-test-addr')?.value || '').trim();
+  if (!testAddr) { toast('⚠️ Enter a test email address first!'); return; }
+
+  const fakeApp = {
+    id: 'APP-TEST-0001',
+    firstName: 'Test',
+    lastName: 'User',
+    email: testAddr,
+    dept: 'Computer Science & Engineering',
+    year: '2nd Year',
+    phone: '+91 99999 00000',
+    motivation: 'This is a test email from Green Guardians Admin Panel.'
+  };
+  toast('Sending test email...');
+  sendStatusEmail(fakeApp, 'accepted')
+    .then(() => toast(`✅ Test email sent to ${testAddr}!`))
+    .catch(err => toast(`❌ Test failed: ${err}`));
+}
+
+function emailLog(type, msg) {
+  const log = document.getElementById('emailLog');
+  if (!log) return;
+  if (log.querySelector('.log-info')?.textContent === 'No emails sent yet this session.') {
+    log.innerHTML = '';
+  }
+  const now = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const line = document.createElement('div');
+  line.className = 'log-' + type;
+  line.textContent = `[${now}] ${msg}`;
+  log.appendChild(line);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ============================================================
+//  ABOUT PHOTOS
+// ============================================================
+let _aboutPhotos = { club: null, campus: null };
+
+function initAboutPhotos() {
+  try {
+    const saved = localStorage.getItem('gg_about_photos');
+    if (saved) {
+      _aboutPhotos = JSON.parse(saved);
+      if (_aboutPhotos.club)   renderAboutPhotoPreview('club',   _aboutPhotos.club);
+      if (_aboutPhotos.campus) renderAboutPhotoPreview('campus', _aboutPhotos.campus);
+    }
+  } catch(e) {}
+}
+
+function handleAboutPhoto(type, file) {
+  if (!file) return;
+  const MAX = 2 * 1024 * 1024;
+  if (file.size > MAX) { toast('⚠️ Image too large! Max 2 MB.'); return; }
+  if (!file.type.startsWith('image/')) { toast('⚠️ Only image files allowed!'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    _aboutPhotos[type] = e.target.result;
+    renderAboutPhotoPreview(type, e.target.result);
+    document.getElementById('aboutPhotoStatus').textContent = '⚠️ Unsaved — click Save & Publish';
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderAboutPhotoPreview(type, src) {
+  const preview   = document.getElementById(type + 'PhotoPreview');
+  const imgEl     = document.getElementById(type + 'PhotoImg');
+  const placeholder = document.getElementById(type + 'PhotoPlaceholder');
+  if (!preview || !imgEl || !placeholder) return;
+  imgEl.src = src;
+  preview.style.display = 'block';
+  placeholder.style.display = 'none';
+}
+
+function clearAboutPhoto(type) {
+  if (!confirm('Remove this photo?')) return;
+  _aboutPhotos[type] = null;
+  const preview   = document.getElementById(type + 'PhotoPreview');
+  const imgEl     = document.getElementById(type + 'PhotoImg');
+  const placeholder = document.getElementById(type + 'PhotoPlaceholder');
+  if (preview)     preview.style.display = 'none';
+  if (imgEl)       imgEl.src = '';
+  if (placeholder) placeholder.style.display = 'flex';
+  document.getElementById('aboutPhotoStatus').textContent = '⚠️ Unsaved — click Save & Publish';
+  // Reset file input
+  const inp = document.getElementById(type + 'PhotoInput');
+  if (inp) inp.value = '';
+}
+
+function saveAboutPhotos() {
+  try {
+    localStorage.setItem('gg_about_photos', JSON.stringify(_aboutPhotos));
+    saveData('about_photos', _aboutPhotos);
+    document.getElementById('aboutPhotoStatus').textContent = '✅ Photos saved & published!';
+    toast('About photos saved & published! ✅');
+    setTimeout(() => {
+      const s = document.getElementById('aboutPhotoStatus');
+      if (s) s.textContent = '';
+    }, 4000);
+  } catch(e) {
+    toast('⚠️ Storage full! Try reducing image size.');
+  }
+}
+
+</script>
+</body>
+</html>
